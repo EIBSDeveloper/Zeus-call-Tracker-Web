@@ -20,7 +20,21 @@
 	<!--begin::Body-->
 	<body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-disabled">
 		<!--begin::Theme mode setup on page load-->
-		<script>var defaultThemeMode = "light"; var themeMode; if ( document.documentElement ) { if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); } else { if ( localStorage.getItem("data-bs-theme") !== null ) { themeMode = localStorage.getItem("data-bs-theme"); } else { themeMode = defaultThemeMode; } } if (themeMode === "system") { themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } document.documentElement.setAttribute("data-bs-theme", themeMode); }</script>
+		<script>var defaultThemeMode = "light"; 
+		var themeMode; if ( document.documentElement ) { 
+			if ( document.documentElement.hasAttribute("data-bs-theme-mode")) { 
+				themeMode = document.documentElement.getAttribute("data-bs-theme-mode"); 
+			} else { 
+				if ( localStorage.getItem("data-bs-theme") !== null ) { 
+					themeMode = localStorage.getItem("data-bs-theme"); 
+				} else { themeMode = defaultThemeMode; 
+
+				} 
+			} if (themeMode === "system") { 
+				themeMode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; 
+			} document.documentElement.setAttribute("data-bs-theme", themeMode); 
+		}
+		</script>
 		<!--end::Theme mode setup on page load-->
 		<!--begin::Main-->
 		<!--begin::Root-->
@@ -52,15 +66,15 @@
 						    				<label class="text-black fw-bold fs-2">Total Outgoing Calls</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center gap-5">
-					    					<label class="badge badge-info text-white fw-bold fs-1 me-5">78</label>
-					    					<label class="badge badge-info text-white fw-bold fs-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Ratio">40%</label>
+					    					<label class="badge badge-info text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $outgoingcall_count); ?></label>
+					    					<label class="badge badge-info text-white fw-bold fs-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Ratio"><?php echo number_format($outgoing_call_ratio); ?>%</label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Today (30-Sep-2024)</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Today (<?php echo date("d-M-Y"); ?>)</label>
 						    		</div>
 									</div>
 								</div>
@@ -80,14 +94,14 @@
 						    				<label class="text-black fw-bold fs-2">Total Incoming Calls</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center">
-					    					<label class="badge badge-success text-white fw-bold fs-1 me-5">89</label>
+					    					<label class="badge badge-success text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $incoming_call_count); ?></label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Today (30-Sep-2024)</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Today (<?php echo date("d-M-Y"); ?>)</label>
 						    		</div>
 									</div>
 								</div>
@@ -107,15 +121,15 @@
 						    				<label class="text-black fw-bold fs-2">Total Missed Calls</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center gap-5">
-					    					<label class="badge badge-warning text-white fw-bold fs-1 me-5" style="background-color:#FF7F00 !important;">15</label>
-					    					<label class="badge badge-warning text-white fw-bold fs-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Ratio" style="background-color:#FF7F00 !important;">13%</label>
+					    					<label class="badge badge-warning text-white fw-bold fs-1 me-5" style="background-color:#FF7F00 !important;"><?php echo sprintf("%02d", $missedcall_count); ?></label>
+					    					<label class="badge badge-warning text-white fw-bold fs-1" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Ratio" style="background-color:#FF7F00 !important;"><?php echo number_format($missed_call_ratio); ?>%</label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Today (30-Sep-2024)</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Today (<?php echo date("d-M-Y"); ?>)</label>
 						    		</div>
 									</div>
 								</div>
@@ -133,14 +147,14 @@
 						    				<label class="text-black fw-bold fs-2">Total Rejected Calls</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center">
-					    					<label class="badge badge-danger text-white fw-bold fs-1 me-5">12</label>
+					    					<label class="badge badge-danger text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $rejected_call_count); ?></label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Today (30-Sep-2024)</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Today (<?php echo date("d-M-Y"); ?>)</label>
 						    		</div>
 									</div>
 								</div>
@@ -280,14 +294,14 @@
 						    				<label class="text-black fw-bold fs-2">Total No. of Callers</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center">
-					    					<label class="badge badge-primary text-white fw-bold fs-1 me-5">05</label>
+					    					<label class="badge badge-primary text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $total_no_caller); ?></label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Upto (September) Month</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Upto (<?php echo date("F"); ?>) Month</label>
 						    		</div>
 									</div>
 									<div class="card bg-body mb-0 mt-2">

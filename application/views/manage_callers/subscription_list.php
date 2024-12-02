@@ -331,17 +331,23 @@
 																					</div>
 																				</td>
 																				<td>
+																					<?php if($sublist->status==3){?>
 																					<div class="badge badge-danger text-white fw-bold fs-7 rounded">Expired</div>
+																					<?php }else{?>
 																					<div class="badge badge-warning text-black fw-bold fs-7 rounded">New Purchased</div>
+																					<?php }?>
 																				</td>
 																				<td>
 																					<span class="text-end">
+																					<?php if($sublist->status==3){?>
+																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_renewal_subscriber" onclick=" renew_caller_modal_func(<?php echo $sublist->subscriber_id;?>)">
+																							<i class="fa-solid fa-repeat fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Package"></i>
+																						</a>
+																					<?php }else{?>
 																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_buy_more_callers" onclick=" buy_caller_modal_func(<?php echo $sublist->subscriber_id;?>)">
 																							<i class="fa-solid fa-cart-plus fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Buy More Callers"></i>
 																						</a>
-																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_renewal_subscriber">
-																							<i class="fa-solid fa-repeat fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Package"></i>
-																						</a>
+																					<?php }?>
 																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_subscription_history" onclick="view_history_func(<?php echo $sublist->subscriber_id;?>)">
 																							<i class="fa-solid fa-clock-rotate-left fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="History"></i>
 																						</a>
@@ -375,123 +381,123 @@
 
 	<!--begin::Modal - Create Callers-->
 	<div class="modal fade" id="kt_modal_add_callers" tabindex="-1" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
-        <!--begin::Modal content-->
-        <div class="modal-content rounded">
-            <!--begin::Modal header-->
-            <div class="modal-header justify-content-end border-0 pb-0">
-                <!--begin::Close-->
-                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                    <span class="svg-icon svg-icon-1">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                </div>
-                <!--end::Close-->
-            </div>
-            <!--end::Modal header-->
-            <div class="modal-body pt-0 pb-15 px-5 px-xl-10">
-              <!--begin::Heading-->
-              <div class="text-center">
-                  <h1 class="mb-3">
-                  	<label>Create Callers &nbsp; - &nbsp;</label>
-                  	<label class="badge badge-danger text-white fs-3 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Available Callers Count">09</label>
-                  	<label class="text-black fs-3 fw-bold">/</label>
-                  	<label class="badge badge-info text-white fs-3 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Total Callers Count">10</label>
-                  </h1>
-              </div>
-              <div class="d-flex align-items-center justify-content-end">
-								<div class="form-check mt-4">
-								    <input class="form-check-input" type="checkbox" checked />
-								    <label class="form-check-label fw-semibold fs-6 text-black">Manager</label>
-								</div>
-							</div>
-              <div class="row">
-              	<div class="col-lg-3">
-									<label class="col-form-label required fw-semibold fs-6">Packages</label>
-									<div class="fv-row">
-										<select class="form-select form-select-solid text-dark" data-control="select2" data-hide-search="false"  data-dropdown-parent="#kt_modal_add_callers">
-											<option value="">Select Packages</option>
-											<option value="1">Silver Packages - 1 Month</option>
-											<option value="2">Gold Packages - 6 Months</option>
-										</select>
+		<div class="modal-dialog modal-xl">
+			<!--begin::Modal content-->
+			<div class="modal-content rounded">
+				<!--begin::Modal header-->
+				<div class="modal-header justify-content-end border-0 pb-0">
+					<!--begin::Close-->
+					<div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+						<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+						<span class="svg-icon svg-icon-1">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+								<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+							</svg>
+						</span>
+						<!--end::Svg Icon-->
+					</div>
+					<!--end::Close-->
+				</div>
+				<!--end::Modal header-->
+				<div class="modal-body pt-0 pb-15 px-5 px-xl-10">
+				<!--begin::Heading-->
+				<div class="text-center">
+					<h1 class="mb-3">
+						<label>Create Callers &nbsp; - &nbsp;</label>
+						<label class="badge badge-danger text-white fs-3 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Available Callers Count">09</label>
+						<label class="text-black fs-3 fw-bold">/</label>
+						<label class="badge badge-info text-white fs-3 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Total Callers Count">10</label>
+					</h1>
+				</div>
+				<div class="d-flex align-items-center justify-content-end">
+									<div class="form-check mt-4">
+										<input class="form-check-input" type="checkbox" checked />
+										<label class="form-check-label fw-semibold fs-6 text-black">Manager</label>
 									</div>
-									<div class="fv-plugins-message-container invalid-feedback" id=""></div>
 								</div>
-              	<div class="col-lg-3">
-              		<label class="col-form-label required fw-semibold fs-6">First Name</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter First Name" value="">
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-              	<div class="col-lg-3">
-              		<label class="col-form-label required fw-semibold fs-6">Last Name</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Last Name" value="">
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-              	<div class="col-lg-3">
-									<label class="col-form-label required fw-semibold fs-6">Department</label>
-									<div class="fv-row">
-										<select class="form-select form-select-solid text-dark" data-control="select2" data-hide-search="false"  data-dropdown-parent="#kt_modal_add_callers" >
-											<option value="">Select Department</option>
-											<option value="1">Sales</option>
-											<option value="2">Production</option>
-											<option value="3">Accounts</option>
-											<option value="4">Finance</option>
-											<option value="5">Human Resources</option>
-											<option value="6">Internal Support</option>
-											<option value="7">Others</option>
-										</select>
+				<div class="row">
+					<div class="col-lg-3">
+										<label class="col-form-label required fw-semibold fs-6">Packages</label>
+										<div class="fv-row">
+											<select class="form-select form-select-solid text-dark" data-control="select2" data-hide-search="false"  data-dropdown-parent="#kt_modal_add_callers">
+												<option value="">Select Packages</option>
+												<option value="1">Silver Packages - 1 Month</option>
+												<option value="2">Gold Packages - 6 Months</option>
+											</select>
+										</div>
+										<div class="fv-plugins-message-container invalid-feedback" id=""></div>
 									</div>
-									<div class="fv-plugins-message-container invalid-feedback" id=""></div>
-								</div>
-              	<div class="col-lg-3">
-              		<label class="col-form-label required fw-semibold fs-6">Mobile No</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Mobile No" value="">
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-              	<div class="col-lg-6">
-									<label class="col-form-label fw-semibold fs-6">Description</label>
-									<textarea class="form-control form-control-solid" rows="1" placeholder="Enter Description">-</textarea>
-									<div class="fv-plugins-message-container invalid-feedback"></div>
-								</div>
-								<div class="col-lg-3 text-center mt-3">
-									<div class="image-input image-input-outline" data-kt-image-input="true" >
-										<div class="image-input-wrapper w-100px h-100px" style="background-image: url('<?php echo base_url()?>assets/Images/member_1.png')"></div>
-										<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
-											<i class="fa-solid fa-pen fs-7 text-black"></i>
-											<input type="file" name="upload[logo]" id="logo" accept=".png, .jpg, .jpeg" value="">
-											<input type="hidden" name="edit_id" value="">
-											<input type="hidden" name="old_logo" value="">
-											<input type="hidden" name="avatar_remove">
-										</label>
-										<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" data-kt-initialized="1">
-										<i class="fa-solid fa-x fs-8 text-black"></i>
-										</span>
-										<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" data-kt-initialized="1">
+					<div class="col-lg-3">
+						<label class="col-form-label required fw-semibold fs-6">First Name</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter First Name" value="">
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<label class="col-form-label required fw-semibold fs-6">Last Name</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Last Name" value="">
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+										<label class="col-form-label required fw-semibold fs-6">Department</label>
+										<div class="fv-row">
+											<select class="form-select form-select-solid text-dark" data-control="select2" data-hide-search="false"  data-dropdown-parent="#kt_modal_add_callers" >
+												<option value="">Select Department</option>
+												<option value="1">Sales</option>
+												<option value="2">Production</option>
+												<option value="3">Accounts</option>
+												<option value="4">Finance</option>
+												<option value="5">Human Resources</option>
+												<option value="6">Internal Support</option>
+												<option value="7">Others</option>
+											</select>
+										</div>
+										<div class="fv-plugins-message-container invalid-feedback" id=""></div>
+									</div>
+					<div class="col-lg-3">
+						<label class="col-form-label required fw-semibold fs-6">Mobile No</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Mobile No" value="">
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+					<div class="col-lg-6">
+										<label class="col-form-label fw-semibold fs-6">Description</label>
+										<textarea class="form-control form-control-solid" rows="1" placeholder="Enter Description">-</textarea>
+										<div class="fv-plugins-message-container invalid-feedback"></div>
+									</div>
+									<div class="col-lg-3 text-center mt-3">
+										<div class="image-input image-input-outline" data-kt-image-input="true" >
+											<div class="image-input-wrapper w-100px h-100px" style="background-image: url('<?php echo base_url()?>assets/Images/member_1.png')"></div>
+											<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
+												<i class="fa-solid fa-pen fs-7 text-black"></i>
+												<input type="file" name="upload[logo]" id="logo" accept=".png, .jpg, .jpeg" value="">
+												<input type="hidden" name="edit_id" value="">
+												<input type="hidden" name="old_logo" value="">
+												<input type="hidden" name="avatar_remove">
+											</label>
+											<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="cancel" data-bs-toggle="tooltip" data-kt-initialized="1">
 											<i class="fa-solid fa-x fs-8 text-black"></i>
-										</span>
+											</span>
+											<span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="remove" data-bs-toggle="tooltip" data-kt-initialized="1">
+												<i class="fa-solid fa-x fs-8 text-black"></i>
+											</span>
+										</div>
+										<div class="form-text">Allowed file types: png, jpg, jpeg.</div>
 									</div>
-									<div class="form-text">Allowed file types: png, jpg, jpeg.</div>
+				</div>
+				<div class="d-flex align-items-center justify-content-end mt-4">
+									<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
+									<a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Create Callers</a>
 								</div>
-              </div>
-              <div class="d-flex align-items-center justify-content-end mt-4">
-								<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
-								<a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Create Callers</a>
-							</div>
-            </div>
-        </div>
-        <!--end::Modal dialog-->
-    </div>
+				</div>
+			</div>
+			<!--end::Modal dialog-->
+		</div>
 	</div>
 	<!--end::Modal - Create Callers-->
 
@@ -656,7 +662,7 @@
 							<div class="row mb-2">
 								<label class="col-5 fs-6 fw-semibold">Email ID</label>
 								<label class="col-1 fs-6 fw-bold">:</label>
-								<label class="col-6 fs-5 fw-bold"id="email_buy">abdulnizamuddinm@gmail.com</label>
+								<label class="col-6 fs-5 fw-bold" id="email_buy">abdulnizamuddinm@gmail.com</label>
 							</div>
 						</div>
 						<div class="col-lg-6">
@@ -877,159 +883,159 @@
 
 	<!--begin::Modal - Renewal Subscriber-->
 	<div class="modal fade" id="kt_modal_renewal_subscriber" tabindex="-1" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl">
-        <!--begin::Modal content-->
-        <div class="modal-content rounded">
-            <!--begin::Modal header-->
-            <div class="modal-header justify-content-end border-0 pb-0">
-                <!--begin::Close-->
-                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
-                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
-                    <span class="svg-icon svg-icon-1">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
-                            <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
-                        </svg>
-                    </span>
-                    <!--end::Svg Icon-->
-                </div>
-                <!--end::Close-->
-            </div>
-            <!--end::Modal header-->
-            <div class="modal-body pt-0 pb-15 px-5 px-xl-10">
-              <!--begin::Heading-->
-              <div class="text-center">
-                  <h1 class="mb-6">
-                  	<label>Renewal Package &nbsp; - &nbsp;</label>
-                  	<label class="badge badge-danger fs-2 text-white">Expired</label>
-                  </h1>
-              </div>
-              <div class="row mb-2">
-								<div class="col-lg-6">
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Subscriber</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<label class="col-6 fs-5 fw-bold">Abdul Nizamuddin M</label>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Company</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<label class="col-6 fs-5 fw-bold">Spacedot Private Limited</label>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Mobile No</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<label class="col-6 fs-5 fw-bold">9685747485</label>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Email ID</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<label class="col-6 fs-5 fw-bold">abdulnizamuddinm@gmail.com</label>
-									</div>
+		<div class="modal-dialog modal-xl">
+			<!--begin::Modal content-->
+			<div class="modal-content rounded">
+				<!--begin::Modal header-->
+				<div class="modal-header justify-content-end border-0 pb-0">
+					<!--begin::Close-->
+					<div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+						<!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+						<span class="svg-icon svg-icon-1">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+								<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+							</svg>
+						</span>
+						<!--end::Svg Icon-->
+					</div>
+					<!--end::Close-->
+				</div>
+				<!--end::Modal header-->
+				<div class="modal-body pt-0 pb-15 px-5 px-xl-10">
+				<!--begin::Heading-->
+				<div class="text-center">
+					<h1 class="mb-6">
+						<label>Renewal Package &nbsp; - &nbsp;</label>
+						<label class="badge badge-danger fs-2 text-white">Expired</label>
+					</h1>
+				</div>
+				<div class="row mb-2">
+					<div class="col-lg-6">
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Subscriber</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<label class="col-6 fs-5 fw-bold" id="subscriber_name_renew">Abdul Nizamuddin M</label>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Company</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<label class="col-6 fs-5 fw-bold" id="company_name_renew">Spacedot Private Limited</label>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Mobile No</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<label class="col-6 fs-5 fw-bold" id="phn_renew">9685747485</label>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Email ID</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<label class="col-6 fs-5 fw-bold" id="email_renew">abdulnizamuddinm@gmail.com</label>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Package</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<label class="col-6 fs-5 fw-bold" id="packg_renew">Gold Package</label>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">No. of Callers / Duration</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<div class="col-6 fs-5 fw-bold">
+								<label class="badge badge-warning text-black fs-6 fw-bold" id="no_of_caller_renew">15</label>
+								<label class="fs-5 fw-bold ms-1 me-1">/</label>
+								<label class="fs-5 fw-bold" id="duration_renew">6 Month</label>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Start / End Date</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<div class="col-6 fs-5 fw-bold">
+								<label class="badge badge-success text-white fs-6 fw-bold" id="start_date_renew">15-Mar-2024</label>
+								<label class="fs-5 fw-bold text-black">/</label>
+								<label class="badge badge-danger text-white fs-6 fw-bold" id="end_date_renew">14-Sep-2024</label>
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label class="col-5 fs-6 fw-semibold">Renewal Days</label>
+							<label class="col-1 fs-6 fw-bold">:</label>
+							<div class="col-6 fs-5 fw-bold">
+								<label class="badge badge-warning text-black fs-6 fw-bold" id="renewal_days_renew">0 Days</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-3">
+						<label class="col-form-label fw-semibold fs-6">Package</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Package" value="Gold Package - 6 Months"  disabled>
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+									<div class="col-lg-3">
+						<label class="col-form-label required fw-semibold fs-6">No.of Callers</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" value="15" id="add_more_caller">
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+					<?php
+						$monday = strtotime("last sunday");
+						$monday = date('w', $monday)==date('w') ? $monday+7*86400 : $monday;
+						$sunday = strtotime(date("d-m-Y",$monday)." +6 days");
+						$this_week_start = date("d-m-Y",$monday);
+						$this_week_end = date("d-m-Y",$sunday);
+						// echo "$this_week_start to $this_week_end ";
+						
+						?>
+					<div class="col-lg-3">
+						<label class="col-form-label fw-semibold fs-6">Start Date</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" value="<?php echo date("d-M-Y"); ?>" id="renew_start_date" disabled>
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<label class="col-form-label fw-semibold fs-6">End Date</label>
+						<div class="fv-row">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" value="<?php echo date('d-M-Y', strtotime("+180 days")); ?>" id="renew_start_date" disabled>
+							<div class="fv-plugins-message-container invalid-feedback"></div>
+						</div>
+					</div>
 								</div>
-								<div class="col-lg-6">
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Package</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<label class="col-6 fs-5 fw-bold">Gold Package</label>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">No. of Callers / Duration</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<div class="col-6 fs-5 fw-bold">
-											<label class="badge badge-warning text-black fs-6 fw-bold">15</label>
-											<label class="fs-5 fw-bold ms-1 me-1">/</label>
-											<label class="fs-5 fw-bold">6 Month</label>
-										</div>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Start / End Date</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<div class="col-6 fs-5 fw-bold">
-											<label class="badge badge-success text-white fs-6 fw-bold">15-Mar-2024</label>
-											<label class="fs-5 fw-bold text-black">/</label>
-											<label class="badge badge-danger text-white fs-6 fw-bold">14-Sep-2024</label>
-										</div>
-									</div>
-									<div class="row mb-2">
-										<label class="col-5 fs-6 fw-semibold">Renewal Days</label>
-										<label class="col-1 fs-6 fw-bold">:</label>
-										<div class="col-6 fs-5 fw-bold">
-											<label class="badge badge-warning text-black fs-6 fw-bold">0 Days</label>
-										</div>
-									</div>
+								<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
+					<label class="fw-bold fs-3 me-13">Sub Total</label>
+						<div class="fw-bold fs-2">
+							<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
+							<label class="fs-2">22,500</label>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
+					<div class="fw-bold fs-3 me-13">GST(18 %)
+						<div class="d-block fs-8 text-center">[Exclusive]</div>
+					</div>
+						<div class="fw-bold fs-2">
+							<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
+							<label class="fs-2">4,050</label>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
+					<label class="fw-bold fs-2 me-13">Grand Total</label>
+						<div class="fw-bold fs-2">
+							<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
+							<label class="fs-2">26,550</label>
+						</div>
+					</div>
+					<div class="d-flex align-items-center justify-content-end mt-8">
+									<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
+									<a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Pay Now</a>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-3">
-              		<label class="col-form-label fw-semibold fs-6">Package</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Package" value="Gold Package - 6 Months" disabled>
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-								<div class="col-lg-3">
-              		<label class="col-form-label required fw-semibold fs-6">No.of Callers</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" value="15">
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-              	<?php
-									$monday = strtotime("last sunday");
-									$monday = date('w', $monday)==date('w') ? $monday+7*86400 : $monday;
-									$sunday = strtotime(date("d-m-Y",$monday)." +6 days");
-									$this_week_start = date("d-m-Y",$monday);
-									$this_week_end = date("d-m-Y",$sunday);
-									// echo "$this_week_start to $this_week_end ";
-									
-								 ?>
-              	<div class="col-lg-3">
-              		<label class="col-form-label fw-semibold fs-6">Start Date</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" value="<?php echo date("d-M-Y"); ?>" disabled>
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-              	<div class="col-lg-3">
-              		<label class="col-form-label fw-semibold fs-6">End Date</label>
-              		<div class="fv-row">
-              			<input type="text" class="form-control form-control-lg_1 form-control-solid" value="<?php echo date('d-M-Y', strtotime("+180 days")); ?>" disabled>
-              			<div class="fv-plugins-message-container invalid-feedback"></div>
-              		</div>
-              	</div>
-							</div>
-							<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
-              	<label class="fw-bold fs-3 me-13">Sub Total</label>
-            		<div class="fw-bold fs-2">
-            			<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
-            			<label class="fs-2">22,500</label>
-            		</div>
-            	</div>
-            	<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
-              	<div class="fw-bold fs-3 me-13">GST(18 %)
-              		<div class="d-block fs-8 text-center">[Exclusive]</div>
-              	</div>
-            		<div class="fw-bold fs-2">
-            			<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
-            			<label class="fs-2">4,050</label>
-            		</div>
-            	</div>
-            	<div class="d-flex align-items-center justify-content-end mb-2 gap-5">
-              	<label class="fw-bold fs-2 me-13">Grand Total</label>
-            		<div class="fw-bold fs-2">
-            			<label><i class="fa-solid fa-indian-rupee-sign fs-4 text-black"></i></label>
-            			<label class="fs-2">26,550</label>
-            		</div>
-            	</div>
-            	<div class="d-flex align-items-center justify-content-end mt-8">
-								<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
-								<a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Pay Now</a>
-							</div>
-            </div>
-        </div>
-        <!--end::Modal dialog-->
-    </div>
+				</div>
+			</div>
+			<!--end::Modal dialog-->
+		</div>
 	</div>
 
 	<div class="modal fade" id="kt_modal_renewal_subscriber_1" tabindex="-1" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
@@ -1633,6 +1639,7 @@
 				$('#total_amount_buy_hidden').val(total_amount.toFixed(2));       // Display the total amount (including GST)
 			}
 		</script>
+
 		<script>
 			function cal_per_caller_amt(no_of_caller) {
 
@@ -1644,6 +1651,89 @@
 
 				// Pass the per-caller amount to GST calculation
 				gst_calculation(amount, gst_per);
+			}
+		</script>
+
+		<!-- renewal  -->
+		<script>
+			var baseurl = '<?php echo base_url(); ?>';
+			function renew_caller_modal_func(id){
+
+				$.ajax({
+					type: "POST",
+					url: baseurl + 'Manage_callers/get_subscriber_by_id',
+					data: {
+						id: id  // Corrected: Using the correct 'id' parameter
+					},
+					dataType: "json",  // Corrected: Expecting a JSON response, not HTML
+					success: function(response) {
+						if (response) {
+							console.log(response)
+							var duration =response.duration=="1" ?response.period+" Month": (response.duration=="2" ? response.period+" Year" :"Life Time")
+							$('#subscriber_id_renew').val(response.subscriber_id);
+							$('#subscriber_name_renew').text(response.name);
+							$('#company_name_renew').text(response.company_name);
+							$('#phn_renew').text(response.mobile_no);
+							$('#email_renew').text(response.email_id);
+							$('#no_of_caller_renew').text(response.no_of_callers);
+							$('#packg_renew').text(response.package_name);
+							$('#start_date_renew').text(formatDate(response.start_date));
+							$('#end_date_renew').text(formatDate(response.end_date));
+							$('#renewal_days_renew').text(response.renewal_days_count + " Days" );
+							$('#duration_renew').text(duration );
+							$('#end_date_renew').val(formatDate(response.end_date));
+							var gst_per = $('#gst_per_renew').val(); 
+							var add_caller = $('#renewal_caller').val(); 
+
+							var no_of_caller=response.no_of_callers;
+
+							var amount=response.package_amount;
+							var per_caller_amount = amount/no_of_caller;
+							var total_caller_amount =per_caller_amount*add_caller ;
+							$('#total_caller_hidden_renew').val(no_of_caller);
+							$('#per_caller_rate_renew').val(per_caller_amount);
+							gst_calculation(total_caller_amount, gst_per)
+							
+						} else {
+							console.error('Invalid response received');
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error('AJAX error:', status, error);
+					}
+				});
+
+			}
+
+			function renew_caller_validation () {
+				$("#submit_renew_caller").prop('disabled', true);
+				let err = 0;
+				var no_of_caller = $('#add_more_caller').val();
+				// var duration = $('#sub_last_name').val();
+			
+				
+				$('#renew_add_more_caller').siblings('.invalid-feedback').text('').show();
+
+				// Initialize error flag
+				let hasError = false;
+				if (no_of_caller === '') {
+					$('#renew_add_more_caller').siblings('.invalid-feedback').text('No.of Callers is Required.').show();
+					hasError = true;
+				}
+				if (no_of_caller === '0' ) {
+					$('#renew_add_more_caller').siblings('.invalid-feedback').text('No.of Callers is Required.').show();
+					hasError = true;
+				}
+				// If there are errors, return false immediately
+				if (hasError) {
+					$("#submit_renew_caller").prop('disabled', false);
+					return false;
+				}
+				else{
+					$("#submit_renew_caller").prop('disabled', true);
+					// return false;
+					$('#renewal_caller_form').submit();
+				}
 			}
 		</script>
 

@@ -17,7 +17,7 @@
 			</div>
 			<?php }?>
 		</div>
-		<input type="hidden" name="user_id" value="<?php echo $caller->user_id;?>">
+		<input type="hidden" name="user_id" value="<?php echo $user_data->user_id;?>">
 		<div class="row">
 			<div class="col-lg-3">
 				<label class="col-form-label required fw-semibold fs-6">First Name</label>
@@ -68,7 +68,7 @@
 				?>
 				<?php
 				$photo_path = FCPATH . 'assets/Images/user/' . $user_photo;
-				$photo_url = base_url() . 'assets/Images/members/' . $user_photo; ?>
+				$photo_url = base_url() . 'assets/Images/user/' . $user_photo; ?>
 				
 				<div class="image-input image-input-outline" data-kt-image-input="true" >
 				<?php if (file_exists($photo_path) && $user_photo) {

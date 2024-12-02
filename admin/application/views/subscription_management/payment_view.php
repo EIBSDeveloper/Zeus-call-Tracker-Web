@@ -79,7 +79,7 @@
 											<div class="text-center">
 												<label class="fw-bold fs-5"><?php echo $view->name; ?>  - <?php echo $view->mobile_no; ?></label>
 												<div class="d-block">
-													<label class="badge badge-primary fs-5 fw-bold text-white"><?php echo $view->company_name; ?></label>
+													<label class="badge badge-primary fs-5 fw-bold text-white"><?php echo $view->user_company; ?></label>
 													<label class="badge badge-danger fs-5 fw-bold text-white" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Days"><?php echo renewal_days_count($view->subscriber_id)?> Days</label>
 												</div>
 											</div>
@@ -123,7 +123,7 @@
 															<div class="row mb-2">
 																<label class="col-5 fs-6 fw-semibold">Company</label>
 																<label class="col-1 fs-6 fw-bold">:</label>
-																<label class="col-6 fs-5 fw-bold"><?php echo $view->company_name; ?></label>
+																<label class="col-6 fs-5 fw-bold"><?php echo $view->user_company; ?></label>
 															</div>
 															<div class="row mb-2">
 																<label class="col-5 fs-6 fw-semibold">Mobile No</label>

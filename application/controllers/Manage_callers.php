@@ -60,26 +60,178 @@ class Manage_callers extends CI_Controller {
 		->get()
 		->result();
 
+		$data['package_list']=$this->db->select('package.*')
+			->from('package')
+			->where('status', '0')
+			->order_by('package_id', 'DESC')
+			->get()
+			->result();
+
 		// print_r($data['sub_package']);
 		// exit;
 
-		$data['caller_list'] = $this->db->select('u.*, d.department_name, p.package_name')
+		// $data['caller_list'] = $this->db->select('u.*, d.department_name, p.package_name')
+		// ->from('user u')
+		// ->join('subscriber a', 'a.user_id = u.user_id', 'left')
+		// ->join('package p', 'p.package_id = u.package_id', 'left')
+		// ->join('department d', 'd.department_id = u.department_id', 'left')
+		// // ->where('a.status', '0') // Filter by subscriber status
+		// ->where('u.status !=', '2') // Exclude users with status 2
+		// ->where('u.created_by', $user_id) // Match the created_by field
+		// ->get()
+		// ->result();
+
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+			$limit = $this->input->post('sorting_filter') ? $this->input->post('sorting_filter') : '10';;
+			$offset = ($page - 1) * $limit;
+
+			// Filter parameters
+			$data['perpage'] = $limit;
+			$data['page'] = $page;
+			
+			
+
+
+			// Get search filters from POST request
+			$fill_data['caller_name_fill'] = $this->input->post('caller_name_fill') ? $this->input->post('caller_name_fill') : '';
+			$fill_data['department_id_fill'] = $this->input->post('department_id_fill') ? $this->input->post('department_id_fill') : '';
+			$fill_data['mobile_fill'] = $this->input->post('mobile_fill') ? $this->input->post('mobile_fill') : '';
+			$fill_data['package_id_fill'] = $this->input->post('package_id_fill') ? $this->input->post('package_id_fill') : '';
+			$fill_data['is_inactive_fill'] = $this->input->post('is_inactive_fill') ? $this->input->post('is_inactive_fill') : '0';
+			$fill_data['is_manager_fill'] = $this->input->post('is_manager_fill') ? $this->input->post('is_manager_fill') : '0';
+			
+			
+
+			// Date filtering
+			$data['dt_fill'] = $this->input->post('dt_fill_select_value');
+			$data['from_date_fillter'] = $this->input->post('from_date_fillter_textbox');
+			$data['to_date_fillter'] = $this->input->post('to_date_fillter_textbox');
+	
+			$fdate = '';
+			$tdate = '';
+			
+			// Handle different date filter cases
+			if ($data['dt_fill'] == "today") {
+				$data['today_date_fillter'] = date("Y-m-d");
+				$fdate = "DATE(u.created_on) = '" . $data['today_date_fillter'] . "'";
+			} elseif ($data['dt_fill'] == "week") {
+				$data['week_from_date_fillter'] = date('Y-m-d', strtotime("last sunday"));
+				$data['week_to_date_fillter'] = date('Y-m-d', strtotime("next saturday"));
+				$fdate = "DATE(u.created_on) >= '" . $data['week_from_date_fillter'] . "'";
+				$tdate = "DATE(u.created_on) <= '" . $data['week_to_date_fillter'] . "'";
+			} elseif ($data['dt_fill'] == "monthly") {
+				$first = date('Y-m-01');
+				$last = date('Y-m-t');
+				$fdate = "DATE(u.created_on) >= '" . $first . "'";
+				$tdate = "DATE(u.created_on) <= '" . $last . "'";
+			} elseif ($data['dt_fill'] == "Custom date") {
+				if ($data['from_date_fillter'] != '') {
+					$first = date('Y-m-d', strtotime($data['from_date_fillter']));
+					$fdate = "DATE(u.created_on) >= '" . $first . "'";
+				}
+	
+				if ($data['to_date_fillter'] != '') {
+					$last = date('Y-m-d', strtotime($data['to_date_fillter']));
+					$tdate = "DATE(u.created_on) <= '" . $last . "'";
+				}
+			}
+			
+			
+			$this->db->select('u.*, d.department_name, p.package_name')
+			->from('user u')
+			->join('subscriber a', 'a.user_id = u.user_id', 'left')
+			->join('package p', 'p.package_id = u.package_id', 'left')
+			->join('department d', 'd.department_id = u.department_id', 'left')
+			// ->where('a.status', '0') // Filter by subscriber status
+			->where('u.status !=', '2') // Exclude users with status 2
+			->where('u.created_by', $user_id);
+
+			if (!empty($fill_data['caller_name_fill'])) {
+				$this->db->like('u.name', $fill_data['caller_name_fill']);
+			}
+			if (!empty($fill_data['department_id_fill'])) {
+				$this->db->where('u.department_id', $fill_data['department_id_fill']);
+			}
+			if (!empty($fill_data['mobile_fill'])) {
+				$this->db->like('u.phone_no', $fill_data['mobile_fill']);
+			}
+			if (!empty($fill_data['package_id_fill'])) {
+				$this->db->where('u.package_id', $fill_data['package_id_fill']);
+			}
+			if (!empty($fill_data['is_manager_fill'])) {
+				$this->db->where('u.is_manager', $fill_data['is_manager_fill']);
+			}
+			if (!empty($fill_data['is_inactive_fill'])) {
+				$this->db->where('u.status', $fill_data['is_inactive_fill']);
+			}
+		
+			
+	
+			// Apply date filtering
+			if (!empty($fdate)) {
+				$this->db->where($fdate);
+			}
+			if (!empty($tdate)) {
+				$this->db->where($tdate);
+			}
+
+			$this->db->limit($limit, $offset);
+			$result = $this->db->get()->result();
+			$data['caller_list'] = $result;
+
+				// Start building the query
+		$count_data =$this->db->select('u.*, d.department_name, p.package_name')
 		->from('user u')
 		->join('subscriber a', 'a.user_id = u.user_id', 'left')
 		->join('package p', 'p.package_id = u.package_id', 'left')
 		->join('department d', 'd.department_id = u.department_id', 'left')
 		// ->where('a.status', '0') // Filter by subscriber status
 		->where('u.status !=', '2') // Exclude users with status 2
-		->where('u.created_by', $user_id) // Match the created_by field
-		->get()
-		->result();
+		->where('u.created_by', $user_id); // Exclude members with status 2
+
+		// Apply filtering for search fields
+		if(!empty($fill_data['caller_name_fill'])) {
+			$count_data->like('u.name', $fill_data['caller_name_fill']);
+		}
+		if (!empty($fill_data['department_id_fill'])) {
+			$count_data->where('u.department_id', $fill_data['department_id_fill']);
+		}
+		if (!empty($fill_data['mobile_fill'])) {
+			$count_data->like('u.phone_no', $fill_data['mobile_fill']);
+		}
+		if (!empty($fill_data['package_id_fill'])) {
+			$this->db->where('u.package_id', $fill_data['package_id_fill']);
+		}
+		if (!empty($fill_data['is_manager_fill'])) {
+			$this->db->where('u.is_manager', $fill_data['is_manager_fill']);
+		}
+		if (!empty($fill_data['is_inactive_fill'])) {
+			$this->db->where('u.status', $fill_data['is_inactive_fill']);
+		}
+		
+
+		// Apply date filtering
+		if (!empty($fdate)) {
+			$count_data->where($fdate);
+		}
+		if (!empty($tdate)) {
+			$count_data->where($tdate);
+		}
+		$count = $count_data->get()->result();
+
+
+		$data['count'] = count($count);
 
 		
-        $this->load->view( 'manage_callers/list',$data );
+        $this->load->view( 'manage_callers/list',array_merge($data, $fill_data) );
     }
 
     public function view_callers($id) {
 
+		$call_start_date = date('Y-m-01');  // Start date (first day of the month)
+		$call_end_date = date('Y-m-t');  
+		// print_r($call_end_date);
+		// exit;
 		$caller_id = $id;
 		$user_id=$this->session->userdata['user_id'];
 		$data['caller'] = $this->db->select('u.*, d.department_name, p.package_name')
@@ -92,14 +244,224 @@ class Manage_callers extends CI_Controller {
 		->where('u.user_id', $caller_id) // Match the created_by field
 		->get()
 		->row();
-        $this->load->view( 'manage_callers/view',$data );
+
+		$subquery = $this->db->select('phone_no')
+    	->from('company_cug_detail')
+    	->get()
+    	->result_array(); // Fetch all phone numbers as an array
+
+		// Get the incoming call count excluding the phone numbers in company_cug_detail
+		$incoming_call_count = $this->db->select('COUNT(*) as incoming_call')
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->where('a.user_id', $caller_id) // Filter by user ID
+			->where('a.call_date >=', $call_start_date) // Start date filter
+			->where('a.call_date <=', $call_end_date) // End date filter
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 1) // Status is 1
+			// ->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
+		
+		$data['incoming_call_count'] = $incoming_call_count= $incoming_call_count->incoming_call;
+
+		// Get the outgoing call count excluding the phone numbers in company_cug_detail
+		$outgoing_call_log_result = $this->db->select('COUNT(*) as outgoing_call')
+		->from('call_log a')
+		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+		->where('a.user_id', $caller_id) // Filter by user ID
+		->where('a.call_date >=', $call_start_date) // Start date filter
+		->where('a.call_date <=', $call_end_date) // End date filter
+		->where('a.redirected_to', 0) // Redirected to 0
+		->where('a.status', 0) // Status is 0
+		->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->get()
+		->row();
+
+		// Assign the result to a variable
+		$data['outgoingcall_count'] =$outgoingcall_count = $outgoing_call_log_result->outgoing_call;
+
+		// missed call
+		$missed_call_log_result = $this->db->select('COUNT(*) as missed_call')
+		->from('call_log a')
+		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+		->where('a.user_id', $caller_id) // Filter by user ID
+		->where('a.call_date >=', $call_start_date) // Start date filter
+		->where('a.call_date <=', $call_end_date) // End date filter
+		->where('a.redirected_to', 0) // Redirected to 0
+		->where('a.status', 2) // Status is 2 for missed calls
+		->where('a.missed_status', 0) // Missed status is 0
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->get()
+		->row();
+
+		$rejected_call_log_result = $this->db->select('COUNT(*) as rejected_call')
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->where('a.user_id', $caller_id) // Filter by user ID
+			->where('a.call_date >=', $call_start_date) // Start date filter
+			->where('a.call_date <=', $call_end_date) // End date filter
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 3) // Status is 3 for rejected calls
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
+
+		// Assign the result to a variable
+		$data['rejected_call_count']=$rejected_call = $rejected_call_log_result->rejected_call;
+
+		// Assign the result to a variable
+		$data['missedcall_count']= $missedcall_count= $missed_call_log_result->missed_call;
+
+		$data['missed_call_ratio'] = 0;
+
+        if ($incoming_call_count > 0 && $missedcall_count >= 0 && $rejected_call >= 0) {
+            $total_calls = $incoming_call_count + $missedcall_count + $rejected_call;
+            if ($total_calls > 0) {
+                $missed_call_ratio = ($missedcall_count / $total_calls) * 100;
+                $data['missed_call_ratio'] = $missed_call_ratio;
+            } else {
+                $data['missed_call_ratio'] = 0;
+            }
+        }
+
+		$data['outgoing_call_ratio'] = 0;
+
+        if ($incoming_call_count > 0 && $missedcall_count >= 0 && $rejected_call >= 0) {
+            $total_calls_all = $incoming_call_count + $missedcall_count + $rejected_call+$outgoingcall_count;
+            if ($total_calls > 0) {
+                $outgoing_call_ratio = ($outgoingcall_count/$total_calls_all) * 100;
+                $data['outgoing_call_ratio'] = $outgoing_call_ratio;
+            } else {
+                $data['outgoing_call_ratio'] = 0;
+            }
+        }
+
+		   // End date (last day of the month)
+
+		   $page = isset($_GET['page']) ? $_GET['page'] : 1;
+			$limit = $this->input->post('sorting_filter') ? $this->input->post('sorting_filter') : '10';;
+			$offset = ($page - 1) * $limit;
+
+			// Filter parameters
+			$data['perpage'] = $limit;
+			$data['page'] = $page;
+			
+			
+
+
+			// Get search filters from POST request
+			$fill_data['call_type_fill'] = $this->input->post('call_type_fill') ? $this->input->post('call_type_fill') : '';
+			$fill_data['mobile_fill'] = $this->input->post('mobile_fill') ? $this->input->post('mobile_fill') : '';
+			
+			
+
+			// Date filtering
+			$data['dt_fill'] = $this->input->post('dt_fill_select_value');
+			$data['from_date_fillter'] = $this->input->post('from_date_fillter_textbox');
+			$data['to_date_fillter'] = $this->input->post('to_date_fillter_textbox');
+	
+			$fdate = '';
+			$tdate = '';
+			
+			// Handle different date filter cases
+			if ($data['dt_fill'] == "today") {
+				$data['today_date_fillter'] = date("Y-m-d");
+				$fdate = "DATE(cl.call_date) = '" . $data['today_date_fillter'] . "'";
+			} elseif ($data['dt_fill'] == "week") {
+				$data['week_from_date_fillter'] = date('Y-m-d', strtotime("last sunday"));
+				$data['week_to_date_fillter'] = date('Y-m-d', strtotime("next saturday"));
+				$fdate = "DATE(cl.call_date) >= '" . $data['week_from_date_fillter'] . "'";
+				$tdate = "DATE(cl.call_date) <= '" . $data['week_to_date_fillter'] . "'";
+			} elseif ($data['dt_fill'] == "monthly") {
+				$first = date('Y-m-01');
+				$last = date('Y-m-t');
+				$fdate = "DATE(cl.call_date) >= '" . $first . "'";
+				$tdate = "DATE(cl.call_date) <= '" . $last . "'";
+			} elseif ($data['dt_fill'] == "Custom date") {
+				if ($data['from_date_fillter'] != '') {
+					$first = date('Y-m-d', strtotime($data['from_date_fillter']));
+					$fdate = "DATE(cl.call_date) >= '" . $first . "'";
+				}
+	
+				if ($data['to_date_fillter'] != '') {
+					$last = date('Y-m-d', strtotime($data['to_date_fillter']));
+					$tdate = "DATE(cl.call_date) <= '" . $last . "'";
+				}
+			}
+			
+			
+			$this->db->select('cb.phone_no, cb.contact_name, cl.call_date, cl.call_time, cl.call_end_time, cl.duration, cl.status,cl.contact_book_id')
+			->from('call_log cl')
+			->join('contact_book cb', 'cb.contact_book_id = cl.contact_book_id', 'left')
+			->where('cl.user_id', $caller_id)  // Filter by user ID
+			->where('cl.call_date >=', $call_start_date) // Start date filter
+			->where('cl.call_date <=', $call_end_date) 
+			->where_not_in('cb.phone_no', array_column($subquery, 'phone_no'))// End date filter
+			->order_by('cl.call_log_id', 'desc');
+
+			if (!empty($fill_data['mobile_fill'])) {
+				$this->db->like('cb.phone_no', $fill_data['mobile_fill']);
+			}
+			if (!empty($fill_data['call_type_fill'])) {
+				$this->db->where('cl.status', $fill_data['call_type_fill']);
+			}
+		
+			
+	
+			// Apply date filtering
+			if (!empty($fdate)) {
+				$this->db->where($fdate);
+			}
+			if (!empty($tdate)) {
+				$this->db->where($tdate);
+			}
+
+			$this->db->limit($limit, $offset);
+			$result = $this->db->get()->result();
+			$data['caller_log'] = $result;
+
+				// Start building the query
+		$count_data =$this->db->select('cb.phone_no, cb.contact_name, cl.call_date, cl.call_time, cl.call_end_time, cl.duration, cl.status,cl.contact_book_id')
+		->from('call_log cl')
+		->join('contact_book cb', 'cb.contact_book_id = cl.contact_book_id', 'left')
+		->where('cl.user_id', $caller_id)  // Filter by user ID
+		->where('cl.call_date >=', $call_start_date) // Start date filter
+		->where('cl.call_date <=', $call_end_date) 
+		->where_not_in('cb.phone_no', array_column($subquery, 'phone_no'))// End date filter
+		->order_by('cl.call_log_id', 'desc'); // Exclude members with status 2
+
+		// Apply filtering for search fields
+		if (!empty($fill_data['mobile_fill'])) {
+			$this->db->like('cb.phone_no', $fill_data['mobile_fill']);
+		}
+		if (!empty($fill_data['call_type_fill'])) {
+			$this->db->where('cl.status', $fill_data['call_type_fill']);
+		}
+		
+
+		// Apply date filtering
+		if (!empty($fdate)) {
+			$count_data->where($fdate);
+		}
+		if (!empty($tdate)) {
+			$count_data->where($tdate);
+		}
+		$count = $count_data->get()->result();
+
+
+		$data['count'] = count($count);
+
+
+	
+        $this->load->view( 'manage_callers/view',array_merge($data, $fill_data) );
     }
 
 	public function add_caller(){
 		$user_id=$this->session->userdata['user_id'];
 		// print_r($this->input->post());
 		// exit;
-
 		$is_manager = $this->input->post("is_manager") ?? 0;
 		$subscription_id = $this->input->post("subscription_id");
 		$package_id = $this->input->post("package_id");
@@ -129,7 +491,6 @@ class Manage_callers extends CI_Controller {
 		} else {
 			// echo "No file uploaded or upload error.";
 		}
-		
 			$subscr_id=$this->input->post("subscriber_id_buy");
 			$subscribtion_details = $this->db->where('subscriber_id ', $subscription_id)
 										->where('status', 0)
@@ -306,7 +667,7 @@ class Manage_callers extends CI_Controller {
 				$this->db->like('b.mobile_no', $fill_data['user_mobile_fill']);
 			}
 			if (!empty($fill_data['package_id_fill'])) {
-				$this->db->like('b.package_id', $fill_data['package_id_fill']);
+				$this->db->where('b.package_id', $fill_data['package_id_fill']);
 			}
 		
 			if (isset($fill_data['subscriber_status_fill']) && $fill_data['subscriber_status_fill'] !== '') {
@@ -556,5 +917,28 @@ class Manage_callers extends CI_Controller {
 		}
 	}
 
+//   add  unknown caller 
+
+		public function add_unknown_caller(){
+			
+			$cb_caller_id=$this->input->post("cb_caller_id");
+			$caller_name=$this->input->post("caller_name");
+			$user_id=$this->session->userdata['user_id'];
+			
+			$data=[
+				'contact_name'=>$caller_name,
+				'modified_on'=>date('Y-m-d H:i:s'),
+				'modified_by'=>$user_id,
+			];
+			$this->db->where('contact_book_id ', $cb_caller_id);
+			$result_user = $this->db->update('contact_book', $data);
+
+			if ($result_user) {
+				$this->session->set_flashdata('g_success', 'Caller Name have been Added successfully...');
+			} else {
+				$this->session->set_flashdata('g_err', 'Could not Added The Caller Name!');
+			}
+			redirect('Manage_callers');
+		}
 	
 }

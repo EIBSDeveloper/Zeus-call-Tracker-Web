@@ -46,9 +46,10 @@ class Dashboard extends CI_Controller {
                 ->row();
 
 
-		$data['subscriber_data']=$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$data['subscriber_data']=$this->db->select('b.*,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 			->from('subscriber b')
 			->join('user a', 'a.user_id = b.user_id', 'left')
+			->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 			->join('package p', 'p.package_id = b.package_id', 'left')
 			->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 			->where('a.status!=', '2')

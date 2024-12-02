@@ -79,10 +79,11 @@ class Subscription_management extends CI_Controller {
 			}
 			
 			
-		$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 			->from('subscriber b')
 			->join('user a', 'a.user_id = b.user_id', 'left')
 			->join('package p', 'p.package_id = b.package_id', 'left')
+			->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 			->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 			->where('a.status!=', '2')
 			->where('b.status!=', '2')
@@ -93,7 +94,7 @@ class Subscription_management extends CI_Controller {
 				$this->db->like('a.name', $fill_data['user_name_fill']);
 			}
 			if (!empty($fill_data['comp_name_fill'])) {
-				$this->db->like('b.company_name', $fill_data['comp_name_fill']);
+				$this->db->like('cmp.company_name', $fill_data['comp_name_fill']);
 			}
 			if (!empty($fill_data['user_mobile_fill'])) {
 				$this->db->like('b.mobile_no', $fill_data['user_mobile_fill']);
@@ -120,9 +121,10 @@ class Subscription_management extends CI_Controller {
 			$data['subscriber_data'] = $result;
 
 				// Start building the query
-		$count_data =$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount,w.no_of_callers')
+		$count_data =$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
+		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 		->join('package p', 'p.package_id = b.package_id', 'left')
 		->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 		->where('a.status!=', '2')
@@ -134,7 +136,7 @@ class Subscription_management extends CI_Controller {
 			$count_data->like('a.name', $fill_data['user_name_fill']);
 		}
 		if (!empty($fill_data['comp_name_fill'])) {
-			$count_data->like('b.company_name', $fill_data['comp_name_fill']);
+			$count_data->like('cmp.company_name', $fill_data['comp_name_fill']);
 		}
 		if (!empty($fill_data['user_mobile_fill'])) {
 			$count_data->like('b.mobile_no', $fill_data['user_mobile_fill']);
@@ -162,9 +164,10 @@ class Subscription_management extends CI_Controller {
 	}
 
 	public function view_subscriber($id) {
-		$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
+		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 		->join('package p', 'p.package_id = b.package_id', 'left')
 		->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 		->where('a.status !=', '2')
@@ -178,9 +181,10 @@ class Subscription_management extends CI_Controller {
     }
 
 	public function view_payment($id) {
-		$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
+		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 		->join('package p', 'p.package_id = b.package_id', 'left')
 		->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 		->where('a.status !=', '2')
@@ -249,9 +253,10 @@ class Subscription_management extends CI_Controller {
 
 		$id=$id = $_POST['id'];
 
-		$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
+		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 		->join('package p', 'p.package_id = b.package_id', 'left')
 		->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 		->where('a.status !=', '2')

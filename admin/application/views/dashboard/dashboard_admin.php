@@ -195,7 +195,7 @@
                                                 </td>
                                                 <td class="text-start">
                                                     <label
-                                                        class="fs-7 text-black"><?php echo $sublist->company_name ?></label>
+                                                        class="fs-7 text-black"><?php echo $sublist->user_company ?? "-" ?></label>
                                                     <div class="d-block">
                                                         <div class="badge badge-secondary fw-bold text-black fs-8">
                                                             <?php echo $sublist->mobile_no ?></div>
