@@ -1,4 +1,5 @@
 <?php $this->load->view("common.php"); ?>
+<?php $common_date= get_general_settings()->date_format ?? 'd-M-Y'; ?>
 <style>
 	.dataTables_scroll
     {
@@ -38,6 +39,15 @@
 		<!--end::Theme mode setup on page load-->
 		<!--begin::Main-->
 		<!--begin::Root-->
+		<?php
+			$currentDate = date('Y-m-d');
+			// Get the current day of the week (0 for Sunday, 6 for Saturday)
+			$currentDayOfWeek = date('w', strtotime($currentDate));
+			// Calculate the start of the week (Sunday)
+			$startOfWeek = date('Y-m-d', strtotime("last Sunday", strtotime($currentDate)));
+			// Calculate the end of the week (Saturday)
+			$endOfWeek = date('Y-m-d', strtotime("next Saturday", strtotime($currentDate)));
+			?>
 		<div class="d-flex flex-column flex-root">
 			<!--begin::Page-->
 			<div class="page d-flex flex-row flex-column-fluid">
@@ -166,59 +176,69 @@
 												<!-- <div class="d-block text-gray-600 fw-semibold mb-1 fs-7">Subscription Plan</div> -->
 											</h3>
 											<div class="d-flex align-items-start justify-content-lg-end justify-content-center gap-2">
-												<label class="badge badge-info text-white fw-bold fs-2">02</label>
+												<label class="badge badge-info text-white fw-bold fs-2"><?php echo sprintf("%02d", $packages_count); ?></label>
 											</div>
 										</div>
 						    		<div class="card-body pt-0 text-center">
 						    			<div id="kt_sliders_1" class="carousel carousel-custom carousel-stretch slide" data-bs-ride="carousel" data-bs-interval="5000">
 						    				<div class="carousel-inner mb-0">
-													<div class="carousel-item active show px-lg-13">
+													<?php if(isset($packages_list)){ ?>
+													<?php foreach ($packages_list as $i=> $pck_list){ ?>
+													<?php 
+														$duration = $pck_list->duration == '3'? 'Life Time':( $pck_list->duration == '1' ? 'Month':'Year')
+													?>
+													<div class="carousel-item <?php echo $i == 0 ? "active":"" ; ?> show px-lg-13">
 														<div class="d-flex flex-column align-items-center justify-content-center">
 															<div class="d-block mb-4 gap-3">
 																<div class="badge badge-light-info">
-																	<label class="fw-bold fs-2 text-black">Silver Package</label>
-																	<label class="fw-bold fs-2 text-black">( 1 Month )</label>
+																	<label class="fw-bold fs-2 text-black"><?php echo $pck_list->package_name?></label>
+																	<label class="fw-bold fs-2 text-black">( <?php echo $pck_list->duration == '3'? ' '.$duration: $pck_list->period .' '.$duration ?> )</label>
 																</div>
+																<?php if($pck_list->status==3){?>
+																	<label class="badge badge-danger fw-bold fs-2 text-white ms-2">Expired</label>
+																<?php }?>
 															</div>
 														</div>
 														<div class="row mb-2 text-start">
 															<label class="col-5 fs-6 fw-semibold">Start / End Date</label>
 															<label class="col-1 fs-6 fw-bold">:</label>
 															<div class="col-6 fs-5 fw-bold">
-																<label class="badge badge-success fw-semibold fs-6">28-Sep-2024</label>
+																<label class="badge badge-success fw-semibold fs-6"><?php echo date($common_date,strtotime($pck_list->start_date)) ?></label>
 																<label>&nbsp;/&nbsp;</label>
-																<label class="badge badge-danger fw-semibold fs-6">27-Oct-2024</label>
+																<label class="badge badge-danger fw-semibold fs-6"><?php echo date($common_date,strtotime($pck_list->end_date)) ?></label>
 															</div>
 														</div>
 														<div class="row mb-2 text-start">
 															<label class="col-5 fs-6 fw-semibold">Renewal Days</label>
 															<label class="col-1 fs-6 fw-bold">:</label>
 															<div class="col-6 fs-5 fw-bold">
-																<label class="badge badge-warning text-black fs-6 fw-bold">30 Days</label>
+																<label class="badge badge-warning text-black fs-6 fw-bold"><?php echo renewal_days_count($pck_list->subscriber_id)?> Days</label>
 															</div>
 														</div>
 														<div class="d-flex align-items-center justify-content-center mb-2 gap-3">
 															<div class="border border-info border-dashed rounded px-2 py-2 mb-0">
 																<label class="fw-bold fs-4 text-black">Callers</label>
 																<div class="d-block">
-																	<label class="badge badge-success fw-bold fs-4 text-white">03</label>
+																	<label class="badge badge-success fw-bold fs-4 text-white"><?php echo sprintf("%02d",$pck_list->available_callers); ?></label>
 																</div>
 															</div>
 															<div class="border border-info border-dashed rounded px-2 py-2 mb-0">
 																<label class="fw-bold fs-4 text-black">Available Callers</label>
 																<div class="d-block">
-																	<label class="badge badge-danger fw-bold fs-4 text-white">07</label>
+																	<label class="badge badge-danger fw-bold fs-4 text-white"><?php echo sprintf("%02d",$pck_list->no_of_callers - $pck_list->available_callers); ?></label>
 																</div>
 															</div>
 															<div class="border border-info border-dashed rounded px-2 py-2 mb-0">
 																<label class="fw-bold fs-4 text-black">Total Callers</label>
 																<div class="d-block">
-																	<label class="badge badge-info fw-bold fs-4 text-white">10</label>
+																	<label class="badge badge-info fw-bold fs-4 text-white"><?php echo sprintf("%02d", $pck_list->no_of_callers);?></label>
 																</div>
 															</div>
 														</div>
 													</div>
-													<div class="carousel-item px-lg-13">
+													<?php }?>
+													<?php }?>
+													<!-- <div class="carousel-item px-lg-13">
 														<div class="d-flex flex-column align-items-center justify-content-center">
 															<div class="d-block mb-4 gap-3">
 																<div class="badge badge-light-info">
@@ -264,12 +284,16 @@
 																</div>
 															</div>
 														</div>
-													</div>
+													</div> -->
 												</div>
 												<div class="d-flex justify-content-end align-items-center">
 													<ol class="p-0 m-0 carousel-indicators carousel-indicators-bullet carousel-indicators-active-primary">
-														<li data-bs-target="#kt_sliders_1" data-bs-slide-to="0" class="active ms-1"></li>
-														<li data-bs-target="#kt_sliders_1" data-bs-slide-to="1" class="ms-1"></li>
+														<?php if(isset($packages_list)){ ?>
+														<?php foreach ($packages_list as $i=> $pck_list){ ?>
+														<li data-bs-target="#kt_sliders_1" data-bs-slide-to="<?php echo $i ; ?>" class="<?php echo $i == 0 ? "active":"" ; ?> ms-1"></li>
+														<!-- <li data-bs-target="#kt_sliders_1" data-bs-slide-to="1" class="ms-1"></li> -->
+														<?php }?>
+														<?php }?>
 													</ol>
 												</div>
 												<button class="carousel-control-prev btn btn-icon btn-bg-primary btn-sm" type="button" data-bs-target="#kt_sliders_1" data-bs-slide="prev">
@@ -294,7 +318,7 @@
 						    				<label class="text-black fw-bold fs-2">Total No. of Callers</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center">
-					    					<label class="badge badge-primary text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $total_no_caller); ?></label>
+					    					<label class="badge badge-primary text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $count_all->no_of_caller); ?></label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
@@ -315,14 +339,14 @@
 						    				<label class="text-black fw-bold fs-2">Total Departments</label>
 						    			</div>
 					    				<div class="d-flex align-items-center justify-content-center">
-					    					<label class="badge badge-danger text-white fw-bold fs-1 me-5">02</label>
+					    					<label class="badge badge-danger text-white fw-bold fs-1 me-5"><?php echo sprintf("%02d", $count_all->department_count); ?></label>
 					    				</div>
 						    		</div>
 						    		<div class="d-flex align-items-center justify-content-start px-2 mb-2">
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Upto (September) Month</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Upto (<?php echo date("F"); ?>) Month</label>
 						    		</div>
 									</div>
 								</div>
@@ -338,22 +362,26 @@
 													</tr>
 												</thead>
 												<tbody class="text-gray-800 fw-bold fs-7">
-													<tr>
-														<td class="text-start">
-															<label class="fs-7 text-black">Sales</label>
-														</td>
-														<td align="start">
-															<div class="badge badge-warning text-black fs-7">02</div>
-														</td>
-													</tr>
-													<tr>
+													<?php if(isset($dept_list)){ ?>
+														<?php foreach ($dept_list as $i=> $d_list){ ?>
+															<tr>
+																<td class="text-start">
+																	<label class="fs-7 text-black"><?php echo $d_list->department_name?></label>
+																</td>
+																<td align="start">
+																	<div class="badge badge-warning text-black fs-7"><?php echo sprintf("%02d", $d_list->no_of_caller_count); ?></div>
+																</td>
+															</tr>
+														<?php }?>
+													<?php }?>
+													<!-- <tr>
 														<td class="text-start">
 															<label class="fs-7 text-black">Production</label>
 														</td>
 														<td align="start">
 															<div class="badge badge-warning text-black fs-7">03</div>
 														</td>
-													</tr>
+													</tr> -->
 												</tbody>
 											</table>
 						    		</div>
@@ -361,7 +389,7 @@
 						    			<label class="me-2">
 						    				<i class="fa-solid fa-circle-info fs-6 text-black"></i>
 						    			</label>
-						    			<label class="d-block fs-7 fw-bold text-black">Upto (September) Month</label>
+						    			<label class="d-block fs-7 fw-bold text-black">Upto (<?php echo date("F"); ?>) Month</label>
 						    		</div>
 									</div>
 								</div>
@@ -372,7 +400,7 @@
 					    	<div class="col-lg-6 mb-3">
 									<div class="card h-100">
 										<div class="card-body pb-8">
-											<div class="fs-3 text-center fw-bold text-black">Today Calls Summary (30-Sep-2024)</div>
+											<div class="fs-3 text-center fw-bold text-black">Today Calls Summary (<?php echo date("d-M-Y"); ?>)</div>
 							    		<div id="chart_today_calls_summary"></div>
 							    	</div>
 						    	</div>
@@ -380,7 +408,7 @@
 						    <div class="col-lg-6 mb-3">
 									<div class="card h-100">
 										<div class="card-body">
-											<div class="fs-3 text-center fw-bold text-black mb-2">Weekly Calls Summary (29-Sep-2024 to 05-Oct-2024 )</div>
+											<div class="fs-3 text-center fw-bold text-black mb-2">Weekly Calls Summary (<?php echo date('d-M-Y', strtotime($startOfWeek)) ?> to <?php echo date('d-M-Y', strtotime($endOfWeek)) ?> )   </div>
 												<!-- (< ?php
 															$monday = strtotime("last sunday");
 															$monday = date('w', $monday)==date('w') ? $monday+7*86400 : $monday;
@@ -392,13 +420,15 @@
 											<div class="row">
 												<div class="col-lg-6 mb-2"></div>
 												<div class="col-lg-6 mb-2">
-													<select class="form-select form-select-solid p-2" data-control="select2" id="weekly_based_callers_reports" onchange="weekly_based_callers_reports_func()">
-														<option value="reports_1">Selva Kumar D</option>
-														<option value="reports_2">Thensidhaa M</option>
-														<option value="reports_3">Raghu S</option>
-														<option value="reports_4">Arul Kumaran A</option>
-														<option value="reports_5">Vimal G</option>
-													</select>
+												<select class="form-select form-select-solid p-2" data-control="select2" id="weekly_based_callers_reports" onchange="weekly_based_callers_reports_func()">
+													<?php if (isset($caller_list) && !empty($caller_list)) { ?>
+														<?php foreach ($caller_list as $i => $c_list) { ?>
+															<option value="<?php echo $c_list->user_id ?>" <?php echo $i === 0 ? 'selected' : '' ?>>
+																<?php echo $c_list->name ?>
+															</option>
+														<?php } ?>
+													<?php } ?>
+												</select>
 												</div>
 											</div>
 							    		<div id="chart_weekly_calls_summary"></div>
@@ -409,7 +439,7 @@
 						    <div class="col-lg-12 mb-3">
 									<div class="card h-100">
 										<div class="card-body">
-											<div class="fs-3 text-center fw-bold text-black">Callers Summary (Sep-2024)</div>
+											<div class="fs-3 text-center fw-bold text-black">Callers Summary (<?php echo date('M-Y')?>)</div>
 							    		<div id="chart_monthly_calls_summary"></div>
 							    	</div>
 						    	</div>
@@ -463,6 +493,13 @@
 			$('.list_page').wrap('<div class="dataTables_scroll" />');
 		</script>
 
+		<script>
+			var today_incoming=<?php echo sprintf("%02d", $incoming_call_count); ?>;
+			var today_outgoing=<?php echo sprintf("%02d", $outgoingcall_count); ?>;
+			var today_missed=<?php echo sprintf("%02d", $missedcall_count); ?>;
+			var today_rejected=<?php echo sprintf("%02d", $rejected_call_count); ?>;
+		</script>
+
 		<!-- Today Calls Summary Start -->
 		<script>
 			Highcharts.chart('chart_today_calls_summary', {
@@ -508,18 +545,18 @@
 			        colorByPoint: true,
 			        data: [{
 			            name: 'Incoming Calls',
-			            y: 78
+			            y: today_incoming
 			            // sliced: true,
 			            // selected: true
 			        }, {
 			            name: 'Outgoing Calls',
-			            y: 89
+			            y: today_outgoing
 			        },  {
 			            name: 'Missed Calls',
-			            y: 15
+			            y: today_missed
 			        }, {
 			            name: 'Rejected Calls',
-			            y: 12
+			            y: today_rejected
 			        }]
 			    }]
 			});
@@ -527,223 +564,272 @@
 		<!-- Today Calls Summary End -->
 
 		<!-- Weekly Calls Summary Start -->
-		<script type="text/javascript">
-			var reports_1 = [{
-		        name: 'Incoming Calls',
-		        data: [44, 55, 41, 37, 22, 43, 21]
-		    }, {
-		        name: 'Outgoing Calls',
-		        data: [53, 32, 33, 52, 13, 43, 32]
-		    }, {
-		        name: 'Missed Calls',
-		        data: [12, 17, 11, 9, 15, 11, 20]
-		    }, {
-		        name: 'Rejected Calls',
-		        data: [9, 7, 5, 8, 6, 9, 4]
-		    }];
+		<!-- <script type="text/javascript">
 
-		    var reports_2 = [{
-		        name: 'Incoming Calls',
-		        data: [30, 40, 35, 50, 45, 60, 55]
-		    }, {
-		        name: 'Outgoing Calls',
-		        data: [40, 30, 25, 35, 45, 50, 60]
-		    }, {
-		        name: 'Missed Calls',
-		        data: [20, 15, 30, 20, 25, 30, 35]
-		    }, {
-		        name: 'Rejected Calls',
-		        data: [25, 35, 30, 25, 20, 15, 10]
-		    }];
-
-		    var reports_3 = [{
-		        name: 'Incoming Calls',
-		        data: [40, 30, 25, 35, 45, 50, 60]
-		    }, {
-		        name: 'Outgoing Calls',
-		        data: [30, 40, 35, 50, 45, 60, 55]
-		    }, {
-		        name: 'Missed Calls',
-		        data: [25, 35, 30, 25, 20, 15, 10]
-		    }, {
-		        name: 'Rejected Calls',
-		        data: [20, 15, 30, 20, 25, 30, 35]
-		    }];
-
-
-		    var reports_4 = [{
-		        name: 'Incoming Calls',
-		        data: [25, 35, 30, 25, 20, 15, 10]
-		    }, {
-		        name: 'Outgoing Calls',
-		        data: [20, 15, 30, 20, 25, 30, 35]
-		    }, {
-		        name: 'Missed Calls',
-		        data: [30, 40, 35, 50, 45, 60, 55]
-		    }, {
-		        name: 'Rejected Calls',
-		        data: [25, 35, 30, 25, 20, 15, 10]
-		    }];
-
-
-		    var reports_5 = [{
-		        name: 'Incoming Calls',
-		        data: [20, 15, 30, 20, 25, 30, 35]
-		    }, {
-		        name: 'Outgoing Calls',
-		        data: [40, 30, 25, 35, 45, 50, 60]
-		    }, {
-		        name: 'Missed Calls',
-		        data: [20, 15, 30, 20, 25, 30, 35]
-		    }, {
-		        name: 'Rejected Calls',
-		        data: [30, 40, 35, 50, 45, 60, 55]
-		    }];
-
-			var options = {
-				series: reports_1,
-		          chart: {
-		          type: 'area',
-		          zoom: {
-		            enabled: false
-		          },
-		        },
-		        title: {
-			        text: '',
-			        align: 'center',
-			         fontWeight: 'bold',
-			        style: {
-			            fontSize: '18px',
-			            
-			          }
-			    },
-			    legend: {
-		          position: 'bottom',
-		          horizontalAlign: 'right',
-		          fontSize: "16px"
-		        },
-		        dataLabels: {
-		          enabled: false
-		        },
-		        stroke: {
-		          curve: 'smooth'
-		        },
-		        xaxis: {
-		          tooltip: {
-				          enabled: false
-				        },
-				        labels: {
-				          show: true,
-				         },
-		          // categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-		          categories: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
-		        }
-		        };
-
-		        var chart = new ApexCharts(document.querySelector("#chart_weekly_calls_summary"), options);
-		        chart.render();
-
-		        function weekly_based_callers_reports_func() {
+			var week_data = <?php echo json_encode($week_caller); ?>;
+				function weekly_based_callers_reports_func() {
 				        var selectedValue = document.getElementById("weekly_based_callers_reports").value;
-				        if (selectedValue === "reports_1") {
-				            chart.updateSeries(reports_1);
-				        }
-				        else if (selectedValue === "reports_2") {
-				            chart.updateSeries(reports_2);
-				        }
-				        else if (selectedValue === "reports_3") {
-				            chart.updateSeries(reports_3);
-				        }
-				        else if (selectedValue === "reports_4") {
-				            chart.updateSeries(reports_4);
-				        }
-				         else {
-				            chart.updateSeries(reports_5);
-				        }
-				    };
-		</script>
+						var filteredData = week_data.find(function(item) {
+								return item.user_id === selectedValue;
+							});
+							if (filteredData) {
+								console.log(filteredData.incoming_count)
+								var reports_1 = [{
+									name: 'Incoming Calls',
+									data: filteredData.incoming_count
+								}, {
+									name: 'Outgoing Calls',
+									data: filteredData.outgoing_count
+								}, {
+									name: 'Missed Calls',
+									data: filteredData.missed_count
+								}, {
+									name: 'Rejected Calls',
+									data: filteredData.rejected_count
+								}];
+
+								chart.updateSeries(reports_1);
+								var options = {
+									series: reports_1,
+									chart: {
+									type: 'area',
+									zoom: {
+										enabled: false
+									},
+									},
+									title: {
+										text: '',
+										align: 'center',
+										fontWeight: 'bold',
+										style: {
+											fontSize: '18px',
+											
+										}
+									},
+									legend: {
+									position: 'bottom',
+									horizontalAlign: 'right',
+									fontSize: "16px"
+									},
+									dataLabels: {
+									enabled: false
+									},
+									stroke: {
+									curve: 'smooth'
+									},
+									xaxis: {
+									tooltip: {
+											enabled: false
+											},
+											labels: {
+											show: true,
+											},
+									categories: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun']
+									}
+									};
+
+									var chart = new ApexCharts(document.querySelector("#chart_weekly_calls_summary"), options);
+									chart.render();
+							}
+			};
+
+		   
+			
+
+		        
+		</script> -->
+		<script type="text/javascript">
+    // Prepare data for filtering
+    var week_data = <?php echo json_encode($week_caller); ?>;
+    
+    // Declare a variable to store the chart instance
+    let chart;
+
+    function weekly_based_callers_reports_func() {
+        var selectedValue = document.getElementById("weekly_based_callers_reports").value;
+
+        // Find the filtered data based on the selected user ID
+        var filteredData = week_data.find(function(item) {
+            return item.user_id == selectedValue; // Use == to compare string and number
+        });
+
+        if (filteredData) {
+            // Prepare the data series for the chart
+            var reports_1 = [
+                {
+                    name: 'Incoming Calls',
+                    data: filteredData.incoming_count
+                },
+                {
+                    name: 'Outgoing Calls',
+                    data: filteredData.outgoing_count
+                },
+                {
+                    name: 'Missed Calls',
+                    data: filteredData.missed_count
+                },
+                {
+                    name: 'Rejected Calls',
+                    data: filteredData.rejected_count
+                }
+            ];
+
+            // Check if the chart already exists, update it instead of recreating
+            if (chart) {
+                chart.updateSeries(reports_1);
+            } else {
+                // Initialize chart options
+                var options = {
+                    series: reports_1,
+                    chart: {
+                        type: 'area',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    title: {
+                        text: '',
+                        align: 'center',
+                        style: {
+                            fontSize: '18px',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    legend: {
+                        position: 'bottom',
+                        horizontalAlign: 'right',
+                        fontSize: '16px'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'smooth'
+                    },
+                    xaxis: {
+                        categories: ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                        tooltip: {
+                            enabled: false
+                        },
+                        labels: {
+                            show: true
+                        }
+                    }
+                };
+
+                // Render the chart
+                chart = new ApexCharts(document.querySelector("#chart_weekly_calls_summary"), options);
+                chart.render();
+            }
+        }
+    }
+	document.addEventListener("DOMContentLoaded", function() {
+        weekly_based_callers_reports_func(); // Call the function for the initially selected user
+    });
+</script>
+
+		
 		<!-- Weekly Calls Summary End -->
+		 
 
 		<!-- Monthly Calls Summary Start -->
 		<script type="text/javascript">
+			var data = <?php echo json_encode($all_caller); ?>;
+			
+				// Initialize arrays
+				var caller_names = []; 
+				var caller_count = []; 
+				var incoming_count = []; 
+				var outgoing_count = []; 
+				var missed_count = []; 
+				var rejected_count = []; 
+				data.forEach(function(item) {
+					caller_names.push(item.name); // Add the name directly to the array
+					caller_count.push(item.caller_count);
+					incoming_count.push(item.incoming_count);
+					outgoing_count.push(item.outgoing_count);
+					missed_count.push(item.missed_count);
+					rejected_count.push(item.rejected_count);
+				});
+			
 			var options = {
-          series: [{
-          name: 'Incoming Calls',
-          color: '#7239EA',
-          data: [44, 55, 41, 37, 22]
-        }, {
-          name: 'Outgoing Calls',
-          color: '#17C653',
-          data: [53, 32, 33, 52, 13]
-        }, {
-          name: 'Missed Calls',
-          color: '#FE7E01',
-          data: [12, 17, 11, 9, 15]
-        }, {
-          name: 'Rejected Calls',
-          color: '#FF0000',
-          data: [9, 7, 5, 8, 6]
-        }],
-          chart: {
-          type: 'bar',
-          height: 350,
-          stacked: true,
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            dataLabels: {
-              total: {
-                enabled: true,
-                offsetX: 0,
-                style: {
-                  fontSize: '13px',
-                  fontWeight: 900
-                }
-              }
-            }
-          },
-        },
-        stroke: {
-          width: 1,
-          colors: ['#fff']
-        },
-        title: {
-          text: ''
-        },
-        xaxis: {
-          categories: ['Selva Kumar D', 'Thensidhaa M', 'Raghu S', 'Arul Kumaran A', 'Vimal G'],
-          labels: {
-            formatter: function (val) {
-              return val
-            }
-          }
-        },
-        yaxis: {
-          title: {
-            text: undefined
-          },
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return val
-            }
-          }
-        },
-        fill: {
-          opacity: 1
-        },
-        legend: {
-          position: 'bottom',
-          horizontalAlign: 'right',
-          offsetX: 40,
-          fontSize: '18px'
-        }
-        };
+				series: [{
+				name: 'Incoming Calls',
+				color: '#7239EA',
+				data: incoming_count
+				}, {
+				name: 'Outgoing Calls',
+				color: '#17C653',
+				data: outgoing_count
+				}, {
+				name: 'Missed Calls',
+				color: '#FE7E01',
+				data: missed_count
+				}, {
+				name: 'Rejected Calls',
+				color: '#FF0000',
+				data: rejected_count
+				}],
+				chart: {
+				type: 'bar',
+				height: 350,
+				stacked: true,
+				},
+				plotOptions: {
+				bar: {
+					horizontal: false,
+					dataLabels: {
+					total: {
+						enabled: true,
+						offsetX: 0,
+						style: {
+						fontSize: '13px',
+						fontWeight: 900
+						}
+					}
+					}
+				},
+				},
+				stroke: {
+				width: 1,
+				colors: ['#fff']
+				},
+				title: {
+				text: ''
+				},
+				xaxis: {
+				categories: caller_names,
+				labels: {
+					formatter: function (val) {
+					return val
+					}
+				}
+				},
+				yaxis: {
+				title: {
+					text: undefined
+				},
+				},
+				tooltip: {
+				y: {
+					formatter: function (val) {
+					return val
+					}
+				}
+				},
+				fill: {
+				opacity: 1
+				},
+				legend: {
+				position: 'bottom',
+				horizontalAlign: 'right',
+				offsetX: 40,
+				fontSize: '18px'
+				}
+        	};
 
-        var chart_monthly_calls_summary = new ApexCharts(document.querySelector("#chart_monthly_calls_summary"), options);
-        chart_monthly_calls_summary.render();
+			var chart_monthly_calls_summary = new ApexCharts(document.querySelector("#chart_monthly_calls_summary"), options);
+			chart_monthly_calls_summary.render();
 		</script>
 		<!-- Monthly Calls Summary End -->
 

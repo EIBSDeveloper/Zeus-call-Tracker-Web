@@ -26,20 +26,7 @@ class Manage_log extends CI_Controller {
     public function index() {
 		$call_start_date = date('Y-m-01');  // Start date (first day of the month)
 		$call_end_date = date('Y-m-t');  
-		// print_r($call_end_date);
-		// exit;
-	
 		$user_id=$this->session->userdata['user_id'];
-		// $data['caller'] = $this->db->select('u.*, d.department_name, p.package_name')
-		// ->from('user u')
-		// ->join('subscriber a', 'a.user_id = u.user_id', 'left')
-		// ->join('package p', 'p.package_id = u.package_id', 'left')
-		// ->join('department d', 'd.department_id = u.department_id', 'left')
-		// ->where('u.status !=', '2') // Exclude users with status 2
-		// ->where('u.created_by', $user_id) // Match the created_by field
-		// ->where('u.user_id', $caller_id) // Match the created_by field
-		// ->get()
-		// ->row();
 
 		$subquery = $this->db->select('phone_no')
     	->from('company_cug_detail')
@@ -140,18 +127,143 @@ class Manage_log extends CI_Controller {
 
 		   // End date (last day of the month)
 
-		$data['caller_log'] = $this->db->select('u.name,u.image,u.phone_no as caller_no,u.is_manager,cb.phone_no, cb.contact_name, cl.call_date, cl.call_time, cl.call_end_time, cl.duration, cl.status,cl.contact_book_id')
-			->from('call_log cl')
-			->join('contact_book cb', 'cb.contact_book_id = cl.contact_book_id', 'left')
-			->join('user u', 'u.user_id = cl.user_id', 'left')
-			->where('u.created_by', $user_id) // Start date filter
-			->where('cl.call_date >=', $call_start_date) // Start date filter
-			->where('cl.call_date <=', $call_end_date) 
-			->where_not_in('cb.phone_no', array_column($subquery, 'phone_no'))// End date filter
-			->order_by('cl.call_log_id', 'desc') // Order by call log ID in descending order
-			->get()
-			->result();
-        $this->load->view( 'manage_log/list',$data );
+		
+		   $call_start_date = date('Y-m-01');  // Start date (first day of the month)
+		   $call_end_date = date('Y-m-t'); // End date (last day of the month)
+		   
+		   // Pagination parameters
+		   $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+		   $limit = $this->input->post('sorting_filter') ? (int)$this->input->post('sorting_filter') : 10; // Default to 10 if no sorting filter is provided
+		   $offset = ($page - 1) * $limit; // Offset for pagination
+		   
+		   // Filter parameters
+		   $data['perpage'] = $limit;
+		   $data['page'] = $page;
+		   
+		   // Get search filters from POST request
+		   $fill_data['communicator_fill'] = $this->input->post('communicator_fill') ?? '';
+		   $fill_data['caller_fill'] = $this->input->post('caller_fill') ?? '';
+		   $fill_data['mobile_fill'] = $this->input->post('mobile_fill') ?? '';
+		   $fill_data['status_fill'] = $this->input->post('status_fill') ?? '';
+		   
+		   // Date filtering
+		   $data['dt_fill'] = $this->input->post('dt_fill_select_value');
+		   $data['from_date_fillter'] = $this->input->post('from_date_fillter_textbox');
+		   $data['to_date_fillter'] = $this->input->post('to_date_fillter_textbox');
+		   
+		   $fdate = '';
+		   $tdate = '';
+		   
+		   // Handle different date filter cases
+		   if ($data['dt_fill'] == "today") {
+			   $data['today_date_fillter'] = date("Y-m-d");
+			   $fdate = "DATE(cl.call_date) = '" . $data['today_date_fillter'] . "'";
+		   } elseif ($data['dt_fill'] == "week") {
+			   $data['week_from_date_fillter'] = date('Y-m-d', strtotime("last sunday"));
+			   $data['week_to_date_fillter'] = date('Y-m-d', strtotime("next saturday"));
+			   $fdate = "DATE(cl.call_date) >= '" . $data['week_from_date_fillter'] . "'";
+			   $tdate = "DATE(cl.call_date) <= '" . $data['week_to_date_fillter'] . "'";
+		   } elseif ($data['dt_fill'] == "monthly") {
+			   $first = date('Y-m-01');
+			   $last = date('Y-m-t');
+			   $fdate = "DATE(cl.call_date) >= '" . $first . "'";
+			   $tdate = "DATE(cl.call_date) <= '" . $last . "'";
+		   } elseif ($data['dt_fill'] == "Custom date") {
+			   if (!empty($data['from_date_fillter'])) {
+				   $first = date('Y-m-d', strtotime($data['from_date_fillter']));
+				   $fdate = "DATE(cl.call_date) >= '" . $first . "'";
+			   }
+			   if (!empty($data['to_date_fillter'])) {
+				   $last = date('Y-m-d', strtotime($data['to_date_fillter']));
+				   $tdate = "DATE(cl.call_date) <= '" . $last . "'";
+			   }
+		   }
+		   
+		   // Start building the main query
+		   $this->db->select('u.name, u.image, u.phone_no as caller_no, u.is_manager, cb.phone_no, cb.contact_name, cl.call_date, cl.call_time, cl.call_end_time, cl.duration, cl.status, cl.contact_book_id')
+			   ->from('call_log cl')
+			   ->join('contact_book cb', 'cb.contact_book_id = cl.contact_book_id', 'left')
+			   ->join('user u', 'u.user_id = cl.user_id', 'left')
+			   ->where('u.created_by', $user_id) // Filter by the user who created the call
+			   ->where('cl.call_date >=', $call_start_date) // Start date filter
+			   ->where('cl.call_date <=', $call_end_date) // End date filter
+			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no')) // Avoid phone numbers in subquery
+			   ->order_by('cl.call_log_id', 'desc');
+		   
+		   // Apply search filters
+		   if (!empty($fill_data['communicator_fill'])) {
+			   $this->db->like('cb.contact_name', $fill_data['communicator_fill']);
+		   }
+		   if (!empty($fill_data['caller_fill'])) {
+			   $this->db->like('u.name', $fill_data['caller_fill']);
+		   }
+		   if (!empty($fill_data['mobile_fill'])) {
+			   $this->db->group_start() // Start OR grouping
+				   ->like('u.phone_no', $fill_data['mobile_fill'])
+				   ->or_like('cb.phone_no', $fill_data['mobile_fill'])
+				   ->group_end(); // End OR grouping
+		   }
+		   if (!empty($fill_data['status_fill'])) {
+			   $this->db->where('cl.status', $fill_data['status_fill']);
+		   }
+		   
+		   // Apply date filtering
+		   if (!empty($fdate)) {
+			   $this->db->where($fdate);
+		   }
+		   if (!empty($tdate)) {
+			   $this->db->where($tdate);
+		   }
+		   
+		   // Apply pagination
+		   $this->db->limit($limit, $offset);
+		   $result = $this->db->get()->result();
+		   $data['caller_log'] = $result;
+		   
+		   // Start counting total records (for pagination)
+		   $count_data = clone $this->db; // Clone the query builder
+		   
+		   // Reset query to reapply filters for count query
+		   $count_data->reset_query();
+		   
+		   // Build the count query
+		   $count_data->select('COUNT(*) as total_count') // Add the total count select
+			   ->from('call_log cl')
+			   ->join('contact_book cb', 'cb.contact_book_id = cl.contact_book_id', 'left')
+			   ->join('user u', 'u.user_id = cl.user_id', 'left')
+			   ->where('u.created_by', $user_id) // Filter by the user who created the call
+			   ->where('cl.call_date >=', $call_start_date) // Start date filter
+			   ->where('cl.call_date <=', $call_end_date) // End date filter
+			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no')); // Avoid phone numbers in subquery
+		   
+		   // Apply the same filters to count the total rows
+		   if (!empty($fill_data['communicator_fill'])) {
+			   $count_data->like('cb.contact_name', $fill_data['communicator_fill']);
+		   }
+		   if (!empty($fill_data['caller_fill'])) {
+			   $count_data->like('u.name', $fill_data['caller_fill']);
+		   }
+		   if (!empty($fill_data['mobile_fill'])) {
+			   $count_data->like('a.mobile_no', $fill_data['mobile_fill']);
+		   }
+		   if (!empty($fill_data['status_fill'])) {
+			   $count_data->like('cl.status', $fill_data['status_fill']);
+		   }
+		   
+		   if (!empty($fdate)) {
+			   $count_data->where($fdate);
+		   }
+		   if (!empty($tdate)) {
+			   $count_data->where($tdate);
+		   }
+		   
+		   // Get total count
+		   $total_count = $count_data->get()->row()->total_count;
+		   $data['count'] = $total_count;
+		   
+		   // Load the view
+		   $this->load->view('manage_log/list', array_merge($data, $fill_data));
+		   
     }
 
 	public function add_unknown_caller(){

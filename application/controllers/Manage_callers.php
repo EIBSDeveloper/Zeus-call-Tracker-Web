@@ -454,6 +454,9 @@ class Manage_callers extends CI_Controller {
 		$data['count'] = count($count);
 
 
+		// print_r($data['count']);
+		// exit;
+		
 	
         $this->load->view( 'manage_callers/view',array_merge($data, $fill_data) );
     }
@@ -734,10 +737,11 @@ class Manage_callers extends CI_Controller {
 
 	public function get_subscriber_by_id() {
 		$id = $_POST['id'];
-		$data= $this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount')
+		$data= $this->db->select('b.*,cmp.company_name as sub_company_name,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
 		->join('package p', 'p.package_id = b.package_id', 'left')
+		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
 		->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 		->where('a.status!=', '2')
 		->where('b.status!=', '2')
@@ -747,7 +751,26 @@ class Manage_callers extends CI_Controller {
 
 		if ($data) {
 			$data->renewal_days_count = renewal_days_count($data->subscriber_id); // Assuming `renewal_days_count` is the helper function
+			$period = $data->period;  // Get period from the data (in months or years)
+			$duration = $data->duration;  // Get duration from the response (1, 2, or 3)
+
+			$start_date = new DateTime();  // Set start date to the current date
+			$end_date = clone $start_date;  // Clone start date for the end date calculation
+
+			// Calculate the end date based on duration and period
+			if ($duration == 1) {
+				$end_date->modify("+$period months");  // Add months to the current date
+			} elseif ($duration == 2) {
+				$end_date->modify("+$period years");  // Add years to the current date
+			} elseif ($duration == 3) {
+				$end_date = null;  // No end date for this case
+			}
+			$end_date_formatted = $end_date ? $end_date->format('Y-m-d') : null;
+			$data->renewal_end_date=$end_date_formatted ;
+
 		}
+
+
 	
 		// Send the response as a JSON object
 		echo json_encode($data);  // Corrected: JSON encoding to send the data
@@ -918,7 +941,6 @@ class Manage_callers extends CI_Controller {
 	}
 
 //   add  unknown caller 
-
 		public function add_unknown_caller(){
 			
 			$cb_caller_id=$this->input->post("cb_caller_id");
@@ -939,6 +961,88 @@ class Manage_callers extends CI_Controller {
 				$this->session->set_flashdata('g_err', 'Could not Added The Caller Name!');
 			}
 			redirect('Manage_callers');
+		}
+
+		public function renew_subscriber(){
+			$user_id=$this->session->userdata['user_id'];
+			print_r($this->input->post());
+			exit;
+			$data = [
+				'add_more_caller' => $this->input->post("add_more_caller"),
+				'sub_amount_buy' => $this->input->post("sub_amount_buy"),
+				'gst_per_buy' => $this->input->post("gst_per_buy"),
+				'gst_amount_buy' => $this->input->post("gst_amount_buy"),
+				'total_amount' => $this->input->post("total_amount_buy"),
+			];
+	
+			$subscr_id=$this->input->post("subscriber_id_buy");
+			$subscribtion_details = $this->db->where('subscriber_id ', $subscr_id)
+										->where('status', 0)
+										->get('subscriber')
+										->row();
+			$package_details = $this->db->where('package_id', $subscribtion_details->package_id)
+			->where('status', 0)
+			->get('package')
+			->row();
+	
+			$data['created_by'] = $user_id;
+			$data['created_at'] = date('Y-m-d H:i:s');
+			$data['updated_by'] = $user_id;
+			$data['updated_at'] = date('Y-m-d H:i:s');
+	
+			$last_scrhsid_detail = $this->db->query("SELECT * FROM `subscriber_details` ORDER BY subscriber_details_id DESC LIMIT 1")->row();
+			$year = substr(date("y"), -2);
+			// Function to generate formatted codes
+			function request_num($input, $pad_len = 3, $prefix = null) {
+				if (is_string($prefix)) {
+					return sprintf("%s%s", $prefix, str_pad($input, $pad_len, "0", STR_PAD_LEFT));
+				}
+				return str_pad($input, $pad_len, "0", STR_PAD_LEFT);
+			}
+	
+			if ($last_scrhsid_detail) {
+				$last_data_sc = $last_scrhsid_detail->subscriber_detail_no;
+				$result = preg_replace('/[^0-9]/', '', explode("/", $last_data_sc)[0]);
+				$data['subscriber_detail_no'] = request_num(((int)$result + 1), 3, "SDH-") . '/' . $year;
+			} else {
+				$data['subscriber_detail_no'] = 'SDH-001/' . $year;
+			}
+			$insert_subscriber_hist = [
+				'subscriber_detail_no' => $data['subscriber_detail_no'],
+				'subscriber_id' => $subscr_id,
+				'package_id' => $subscribtion_details->package_id,
+				'no_of_callers' => $data['add_more_caller'],
+				'amount' => $data['sub_amount_buy'],
+				'gst_amount' => $data['gst_amount_buy'],
+				'paid_amount' => $data['total_amount'],
+				'start_date' => $subscribtion_details->start_date,
+				'end_date' => $subscribtion_details->end_date,
+				'period' => $package_details->period,
+				'duration' => $package_details->duration,
+				'created_by' => $data['created_by'],
+				'created_at' => $data['created_at'],
+				'updated_by' => $data['updated_by'],
+				'updated_at' => $data['updated_at'],
+				'status' => 0,
+			];
+			$buy_caller=$this->db->insert('subscriber_details', $insert_subscriber_hist);
+	
+			if($buy_caller){
+				$insert_data = [
+					'no_of_callers' => $data['add_more_caller'] + $subscribtion_details->no_of_callers,
+					'updated_by' => $data['updated_by'],
+					'updated_at' => $data['updated_at'],
+					'status' => 0,
+					
+				];
+				$this->db->where('subscriber_id', $subscr_id);
+				$update_success = $this->db->update('subscriber', $insert_data);
+				$this->session->set_flashdata('g_success', 'More Caller Buy successfully...');
+			}else {
+				$this->session->set_flashdata('g_err', 'Could not Buy More Caller!');
+			}
+			redirect('Manage_callers/subscription_list');
+	
 		}
 	
 }

@@ -31,7 +31,7 @@ var hostUrl = "assets/";
 <!--CKEditor Build Bundles:: Only include the relevant bundles accordingly-->
 <script src="<?php echo base_url();?>assets/plugins/custom/ckeditor/ckeditor-classic.bundle.js"></script>
 <!-- <script src="//cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css"></script> -->
-<script src="//cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+<!-- <script src="//cdn.datatables.net/2.0.8/js/dataTables.min.js"></script> -->
 <!--end::Custom Javascript-->
 <script>
     const currentUrl = document.URL;

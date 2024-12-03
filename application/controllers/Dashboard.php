@@ -30,6 +30,9 @@ class Dashboard extends CI_Controller {
 		$call_end_date = date('Y-m-t');  
 		$today_date = date('Y-m-d');  
         $current_month = date('Y-m');
+
+		$currentMonth = date('m'); // Current month
+        $currentYear = date('Y'); // Current year
 	
 		$user_id=$this->session->userdata['user_id'];
 		$subquery = $this->db->select('phone_no')
@@ -54,35 +57,35 @@ class Dashboard extends CI_Controller {
 
 		// Get the outgoing call count excluding the phone numbers in company_cug_detail
 		$outgoing_call_log_result = $this->db->select('COUNT(*) as outgoing_call')
-		->from('call_log a')
-		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
-		->join('user u', 'u.user_id = a.user_id', 'left')
-		->where('u.created_by', $user_id) 
-        ->where('a.call_date', $today_date)// Filter by user ID
-		->where('a.redirected_to', 0) // Redirected to 0
-		->where('a.status', 0) // Status is 0
-		->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
-		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
-		->get()
-		->row();
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->join('user u', 'u.user_id = a.user_id', 'left')
+			->where('u.created_by', $user_id) 
+			->where('a.call_date', $today_date)// Filter by user ID
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 0) // Status is 0
+			->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
 
 		// Assign the result to a variable
 		$data['outgoingcall_count'] =$outgoingcall_count = $outgoing_call_log_result->outgoing_call;
 
 		// missed call
 		$missed_call_log_result = $this->db->select('COUNT(*) as missed_call')
-		->from('call_log a')
-		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
-		->join('user u', 'u.user_id = a.user_id', 'left')
-		->where('u.created_by', $user_id)
-        ->where('a.call_date', $today_date) // Filter by user ID
-		->where('a.redirected_to', 0) // Redirected to 0
-		->where('a.status', 2) // Status is 2 for missed calls
-		->where('a.missed_status', 0) // Missed status is 0
-		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
-		->get()
-		->row();
-
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->join('user u', 'u.user_id = a.user_id', 'left')
+			->where('u.created_by', $user_id)
+			->where('a.call_date', $today_date) // Filter by user ID
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 2) // Status is 2 for missed calls
+			->where('a.missed_status', 0) // Missed status is 0
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
+	//reject call
 		$rejected_call_log_result = $this->db->select('COUNT(*) as rejected_call')
 			->from('call_log a')
 			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
@@ -132,16 +135,99 @@ class Dashboard extends CI_Controller {
             }
         }
 
-        $total_no_caller = $this->db->select('COUNT(DISTINCT a.user_id) as no_of_caller')
-        ->from('call_log a')
-        ->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
-        ->join('user u', 'u.user_id = a.user_id', 'left')
-        ->where('u.created_by', $user_id) 
-        ->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))  // Exclude phone numbers
+        $data['count_all'] = $this->db->select('COUNT(DISTINCT a.user_id) as no_of_caller ,COUNT(DISTINCT a.department_id) as department_count')
+        ->from('user a')
+        ->where('a.created_by', $user_id) 
+		->where('a.status!=', '2')
         ->get()
         ->row();
 
-        $data['total_no_caller']= $total_no_caller->no_of_caller;
+		$data['dept_list']=$this->db->select('d.department_name ,COUNT(DISTINCT u.user_id) as no_of_caller_count')
+        ->from('user u')
+        ->join('department d', 'u.department_id = d.department_id', 'left')
+        ->where('u.created_by', $user_id) 
+		->where('u.status!=', '2')
+		->group_by('u.department_id')  // Exclude phone numbers
+        ->get()
+        ->result();
+
+		$data['packages_list']=$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,w.amount')
+			->from('subscriber b')
+			->join('user a', 'a.user_id = b.user_id', 'left')
+			->join('package p', 'p.package_id = b.package_id', 'left')
+			->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
+			->where('a.status!=', '2')
+			->where('b.status!=', '2')
+			->where('b.user_id', $user_id)
+			->group_by('b.subscriber_id')
+			->order_by('b.status', 'ASC')
+			->get()
+			->result();
+
+		$data['caller_list']=$this->db->select('u.name,u.user_id')
+			->from('user u')
+			->where('u.status !=', '2') // Exclude users with status 2
+			->where('u.created_by', $user_id)
+			->group_by('u.user_id')
+			->get()
+			->result();
+
+		$data['packages_count']=count($data['packages_list']);
+		$data['all_caller'] = $this->db->select('
+				u.name,
+				u.user_id,
+				COUNT(a.user_id) AS caller_count')
+			->from('user u')
+			->join(
+				'(SELECT * FROM call_log WHERE call_date >= "'.$call_start_date.'" AND call_date <= "'.$call_end_date.'") a',
+				'a.user_id = u.user_id',
+				'left'
+			)
+			->where('u.status !=', '2') // Exclude users with status 2
+			->where('u.created_by', $user_id)
+			->group_by('u.user_id')
+			->get()
+			->result_array();
+
+			foreach ($data['all_caller'] as &$caller) {
+				$caller['incoming_count'] = incoming_call_month($caller['user_id'],$call_start_date,$call_end_date);
+				$caller['outgoing_count'] = outcoming_call_month($caller['user_id'],$call_start_date,$call_end_date);
+				$caller['missed_count'] = missed_call_month($caller['user_id'],$call_start_date,$call_end_date);
+				$caller['rejected_count'] = rejected_call_month($caller['user_id'],$call_start_date,$call_end_date);
+			}
+
+
+		// current week data
+		$currentDate = date('Y-m-d');
+		$currentDayOfWeek = date('w', strtotime($currentDate));
+		$startOfWeek = date('Y-m-d', strtotime("last Sunday", strtotime($currentDate)));
+		$endOfWeek = date('Y-m-d', strtotime("next Saturday", strtotime($currentDate)));
+
+		$data['week_caller'] = $this->db->select('
+				u.name,
+				u.user_id,
+				COUNT(a.user_id) AS caller_count')
+			->from('user u')
+			->join(
+				'(SELECT * FROM call_log WHERE call_date >= "'.$startOfWeek.'" AND call_date <= "'.$endOfWeek.'") a',
+				'a.user_id = u.user_id',
+				'left'
+			)
+			->where('u.status !=', '2') // Exclude users with status 2
+			->where('u.created_by', $user_id)
+			->group_by('u.user_id')
+			->get()
+			->result_array();
+
+			foreach ($data['week_caller'] as &$caller) {
+				$caller['incoming_count'] = incoming_call_weekly($caller['user_id'],$startOfWeek,$endOfWeek);
+				$caller['outgoing_count'] = outcoming_call_weekly($caller['user_id'],$startOfWeek,$endOfWeek);
+				$caller['missed_count'] = missed_call_weekly($caller['user_id'],$startOfWeek,$endOfWeek);
+				$caller['rejected_count'] = rejected_call_weekly($caller['user_id'],$startOfWeek,$endOfWeek);
+			}
+	
+	// 	print_r($data['week_caller']);
+	//    exit;
         $this->load->view( 'dashboard/dashboard',$data );
     }
 }

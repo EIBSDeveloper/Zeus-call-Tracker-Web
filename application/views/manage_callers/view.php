@@ -208,7 +208,7 @@
 												</div>
 												<div class="col-lg-2 mb-2">
 													<div class="d-flex justify-content-lg-end justify-content-center gap-2">
-														<button type="button" class="btn btn-primary btn-sm" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-static="true"><i class="fa-solid fa-filter fs-7"></i>Filter</button>
+													<button type="button" class="btn btn-sm btn-primary me-3 mb-4" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-static="true"><i class="fa-solid fa-filter fs-7"></i>Filter</button>
 
 														<div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
 																	<div class="px-7 py-5" data-kt-user-table-filter="form">
@@ -353,9 +353,44 @@
 																	</div>
 																</div>
 
-														<a href="javascript:;" class="btn btn-primary btn-sm">
-															<span class="me-2"><i class="fa-solid fa-file-export fs-7"></i></span>Export
-														</a>
+																<div>
+																	<button type="button" type="button"
+																		data-kt-menu-trigger="click"
+																		data-kt-menu-placement="bottom-end"
+																		class="btn btn-sm btn-primary"> <i
+																			class="fa-solid fa-file-export fs-7"></i>
+																		Export</button>
+																	<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px py-3"
+																		data-kt-menu="true">
+																		<div data-kt-user-table-filter="form_1">
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3"
+																					id="export_excel">
+																					<i
+																						class="fas fa-file-excel fs-4 me-3"></i>
+																					Excel
+																				</a>
+																			</div>
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3" id="export_csv">
+																					<i
+																						class="fas fa-file-csv fs-4 me-3"></i>
+																					CSV
+																				</a>
+																			</div>
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3" id="export_pdf">
+																					<i
+																						class="fas fa-file-pdf fs-4 me-3"></i>
+																					PDF
+																				</a>
+																			</div>
+																		</div>
+																	</div>
+																</div>
 													</div>
 												</div>
 											</div>
@@ -1005,11 +1040,22 @@
 				});
 			<?php } ?>
 		</script>
+		<script>
+			$(document).ready(function() {
+				$(".move_to").on("click", function() {
+					value = $(this).val();
+					// alert(value);
+					$('#filter_form').attr('action', "<?php echo base_url(); ?>Manage_callers/view_callers/<?php echo $caller->user_id ; ?>/?page=" + value);
+					$("#filter_form").submit();
+					e.preventDefault();
+				});
+			});
+		</script>
 
 		<script>
 			function save_unknown_func(id){
 				$('#cb_caller_id').val(id)
-				console.log(id)
+				
 			}
 		</script>
 
@@ -1178,7 +1224,7 @@
 							"lengthMenu": "Show _MENU_",
 						},
 					}),
-					console.log(t)
+					
 
 					$("#export_excel").on("click", function(e) {
 						e.preventDefault(), t.button(0).trigger()

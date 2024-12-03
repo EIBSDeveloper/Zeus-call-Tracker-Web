@@ -356,7 +356,7 @@
 	<script>
 		// Assuming data is dynamically generated in PHP
 		var data = <?php echo json_encode($all_month); ?>;
-
+		
 		// Initialize arrays
 		var monthlyData = Array(12).fill(0); // Initialize array with 0 for each month
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

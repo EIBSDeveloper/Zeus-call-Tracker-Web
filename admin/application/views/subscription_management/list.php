@@ -396,134 +396,7 @@
 																	</tr>
 																<?php }?>
 															<?php }?>
-															<!-- <tr>
-																<td>
-																	<div class="d-flex align-items-center">
-																		<a class="d-block overlay text-center me-3" href="<?php echo base_url(); ?>assets/Images/member_1.png" data-fslightbox="lightbox-basic_list">
-																		    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_1.png')">
-																		    </div>
-																		    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																		        <i class="bi bi-eye-fill text-white fs-2"></i>
-																		    </div>
-																	 	</a>
-																	 	<div class="mb-0 me-2">
-																			<label class="fs-7 fw-semibold text-black">Gokul E</label>
-																			<label class="cursor-pointer fs-7 fw-semibold text-black ms-1"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="gogul@gmail.com">
-																				<i class="fa-solid fa-envelope fs-5 text-black"></i>
-																			</label>
-																			<div class="d-block fs-8 fw-semibold text-gray-600"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Created Date">20-Sep-2024</div>
-																		</div>
-																 	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Rajexim Private Limited</label>
-																	<div class="d-block">
-																		<div class="badge badge-secondary fw-bold text-black fs-8">8956231245</div>
-																	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Silver Package</label>
-																	<label class="fs-7 text-black ms-1 me-1">/</label>
-																	<label class="fs-7 text-black">1 Month</label>
-																	<div class="d-block">
-																		<label class="badge badge-warning fs-8 text-black me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Caller Count">12</label>
-																		<label class="badge badge-info">
-																			<span class="fs-8 text-black">
-																				<i class="fa-solid fa-indian-rupee-sign fs-8 text-white me-1"></i>
-																			</span>
-																			<span class="fs-8 text-white">3,000</span>
-																		</label>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-success fs-7">20-Sep-2024</div>
-																	<div class="d-block mt-1">
-																		<div class="badge badge-danger fs-7">19-Oct-2024</div>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-warning text-black fs-7">23 Days</div>
-																</td>
-																<td>
-																	<button class="badge badge-warning text-black fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true" style="background-color: #FF7F00 !important;">Blocked Subscriber</button>
-															        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
-															        	<div class="py-3">
-																        	<div class="menu-item px-3">
-																        		<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber">Unblock Subscriber</a>
-																        	</div>
-																        </div>
-															        </div>
-																</td>
-																<td>
-																	<span class="text-end">
-																		<a href="<?php echo base_url(); ?>Subscription_management/view_subscriber_2" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																			<i class="fa-solid fa-eye fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View"></i>
-																		</a>
-																	</span>
-																</td>
-															</tr>
-															<tr>
-																<td>
-																	<div class="d-flex align-items-center">
-																		<a class="d-block overlay text-center me-3" href="<?php echo base_url(); ?>assets/Images/member_1.png" data-fslightbox="lightbox-basic_list">
-																		    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_1.png')">
-																		    </div>
-																		    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																		        <i class="bi bi-eye-fill text-white fs-2"></i>
-																		    </div>
-																	 	</a>
-																	 	<div class="mb-0 me-2">
-																			<label class="fs-7 fw-semibold text-black">Amaran D</label>
-																			<label class="cursor-pointer fs-7 fw-semibold text-black ms-1"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="amaran@gmail.com">
-																				<i class="fa-solid fa-envelope fs-5 text-black"></i>
-																			</label>
-																			<div class="d-block fs-8 fw-semibold text-gray-600"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Created Date">20-Apr-2023</div>
-																		</div>
-																 	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Black Forest Cakes</label>
-																	<div class="d-block">
-																		<div class="badge badge-secondary fw-bold text-black fs-8">9090858685</div>
-																	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Gold Package</label>
-																	<label class="fs-7 text-black ms-1 me-1">/</label>
-																	<label class="fs-7 text-black">6 Months</label>
-																	<div class="d-block">
-																		<label class="badge badge-warning fs-8 text-black me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Caller Count">15</label>
-																		<label class="badge badge-info">
-																			<span class="fs-8 text-black">
-																				<i class="fa-solid fa-indian-rupee-sign fs-8 text-white me-1"></i>
-																			</span>
-																			<span class="fs-8 text-white">22,500</span>
-																		</label>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-success fs-7">15-Mar-2024</div>
-																	<div class="d-block mt-1">
-																		<div class="badge badge-danger fs-7">14-Sep-2024</div>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-warning text-black fs-7">0 Days</div>
-																</td>
-																<td>
-																	<div class="badge badge-danger text-white fw-bold fs-7 rounded">Expired</div>
-																</td>
-																<td>
-																	<span class="text-end">
-																		<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_renewal_subscriber">
-																			<i class="fa-solid fa-repeat fs-2 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Subscriber"></i>
-																		</a>
-																		<a href="<?php echo base_url(); ?>Subscription_management/view_subscriber_3" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																			<i class="fa-solid fa-eye fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View"></i>
-																		</a>
-																	</span>
-																</td>
-															</tr> -->
+															
 														</tbody>
 													</table>
 														<div class="row">
@@ -778,6 +651,17 @@
 					?>
 				});
 			<?php } ?>
+		</script>
+		<script>
+			$(document).ready(function() {
+				$(".move_to").on("click", function() {
+					value = $(this).val();
+					// alert(value);
+					$('#filter_form').attr('action', "<?php echo base_url(); ?>Subscription_management/?page=" + value);
+					$("#filter_form").submit();
+					e.preventDefault();
+				});
+			});
 		</script>
 		<!-- Flash Data Script::End -->
 		<!-- <script>

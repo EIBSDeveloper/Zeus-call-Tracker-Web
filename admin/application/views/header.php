@@ -1,3 +1,4 @@
+<?php $user_data_header = get_user_details($_SESSION['user_id']);  ?> 
 <!--begin::Header-->
 <div id="kt_header" class="header align-items-stretch bg-primary">
     <!--begin::Container-->
@@ -213,7 +214,25 @@
                     <div class="cursor-pointer symbol symbol-30px symbol-md-40px"
                         data-kt-menu-trigger="{default: 'click', lg: 'hover'}" data-kt-menu-attach="parent"
                         data-kt-menu-placement="bottom-end">
-                        <img src="<?php echo base_url()?>assets/Images/admin_1.png" />
+                        <?php
+                            $first_character = isset($user_data_header->name) && $user_data_header->name ? $user_data_header->name[0] : 'A';
+                            $str = strtoupper($first_character);
+
+                            $photo_url  = base_url() . 'assets/Images/users/' . str_replace('/', '', $user_data_header->photo);
+                            $letter_url = base_url() . 'assets/Images/Letters/' . $str . '.png';
+
+                            $photo_path = FCPATH . 'assets/Images/users/' . $user_data_header->photo;
+                            $letter_path = FCPATH . 'assets/Images/Letters/' . $str . '.png';
+                            ?>
+                            <?php if (!empty($user_data_header->photo) && file_exists($photo_path)) { ?>
+                                <img src="<?php echo $photo_url; ?>" alt="image" />
+                            <?php } else if (file_exists($letter_path)) { ?>
+                                <img src="<?php echo $letter_url ?>" alt="image" />
+                            <?php } else { ?>
+                                <img src="<?php echo base_url('assets/Images/Letters/A.png'); ?>" alt="image" />
+                            <?php }
+
+                            ?>
                     </div>
                     <!--begin::User account menu-->
                     <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold py-4 fs-6 w-275px"
@@ -223,12 +242,31 @@
                             <div class="menu-content d-flex align-items-center px-3">
                                 <!--begin::Avatar-->
                                 <div class="symbol symbol-50px me-5">
-                                    <img src="<?php echo base_url()?>assets/Images/admin_1.png" />
+                                <?php
+									$first_character = isset($user_data_header->name) && $user_data_header->name ? $user_data_header->name[0] : 'A';
+									$str = strtoupper($first_character);
+
+									$photo_url  = base_url() . 'assets/Images/users/' . str_replace('/', '', $user_data_header->photo);
+									$letter_url = base_url() . 'assets/Images/Letters/' . $str . '.png';
+
+									$photo_path = FCPATH . 'assets/Images/users/' . $user_data_header->photo;
+									$letter_path = FCPATH . 'assets/Images/Letters/' . $str . '.png';
+									?>
+									<?php if (!empty($user_data_header->photo) && file_exists($photo_path)) { ?>
+										<img src="<?php echo $photo_url; ?>" alt="image" />
+									<?php } else if (file_exists($letter_path)) { ?>
+										<img src="<?php echo $letter_url ?>" alt="image" />
+									<?php } else { ?>
+										<img src="<?php echo base_url('assets/Images/Letters/A.png'); ?>" alt="image" />
+									<?php }
+
+									?>
+                                   
                                 </div>
                                 <!--end::Avatar-->
                                 <!--begin::Username-->
                                 <div class="d-flex flex-column">
-                                    <div class="fw-bold d-flex align-items-center fs-5">Amuthan B</div>
+                                    <div class="fw-bold d-flex align-items-center fs-5"><?php echo $user_data_header ? $user_data_header->name : ''; ?></div>
                                     <div class="d-block">
                                         <div class="badge badge-light-success fw-bold fs-8 px-2 py-1">Super Admin</div>
                                     </div>
@@ -287,78 +325,129 @@
                 <!--end::Close-->
             </div>
             <!--end::Modal header-->
-            <div class="modal-body pt-0 pb-15 px-5 px-xl-10">
-                <!--begin::Heading-->
-                <div class="text-center">
-                    <h1 class="mb-3">Update My Profile</h1>
-                </div>
-                <div class="row mb-4">
-                    <div class="col-lg-12 text-center mt-2">
-                            <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('<?php echo base_url(); ?>assets/Images/admin_1.png')">
-                                <div class="image-input-wrapper w-125px h-125px" style="background-image: url('<?php echo base_url(); ?>assets/Images/admin_1.png')"></div>
-                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
-                                    <i class="fa-solid fa-pencil fs-7 text-black"></i>
-                                    <input type="file" name="logo" id="logo" accept=".png, .jpg, .jpeg">
-                                    <input type="hidden" name="avatar_remove">
-                                </label>
+            <form name="profile_update" id="profile_update" method="POST" action="<?php echo base_url(); ?>Admin/Update" enctype="multipart/form-data" onsubmit="return Edit_validate();">
+                <div class="modal-body pt-0 pb-15 px-5 px-xl-10">
+                    <!--begin::Heading-->
+                    <div class="text-center">
+                        <h1 class="mb-3">Update My Profile</h1>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-lg-12 text-center mt-2">
+                        <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('<?php echo base_url(); ?>assets/Images/admin_1.png')">
+								<?php $len = strlen($user_data_header->photo ?? '');
+								$photo_path = FCPATH.'assets/Images/users/' . $user_data_header->photo;
+								if ($user_data_header->photo ?? '') { ?>
+									<div class="image-input-wrapper w-125px h-125px" style="background-image: url(<?php echo base_url(); ?>assets/Images/users/<?php echo $user_data_header->photo; ?>)">
+									</div>
+								<?php } else { ?>
+									<?php $first_character = $user_data_header->name[0];
+									$str = strtoupper($first_character);
+									$str; ?>
+									<div class="image-input-wrapper w-125px h-125px" style="background-image: url(<?php echo base_url(); ?>assets/Images/Letters/<?php echo $str; ?>.png)"></div>
+								<?php } ?>
+								<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
+									<i class="bi bi-pencil-fill fs-7"></i>
+									<input type="file" name="logo_super" id="logo_super" accept=".png, .jpg, .jpeg">
+									<input type="hidden" name="admin_profile" id="admin_profile" value="<?php echo $user_data_header->photo ?>">
+									<input type="hidden" name="avatar_remove">
+								</label>
+							</div>
+                                <div class="form-text pt-1">Allowed file types: png, jpg, jpeg.</div>
                             </div>
-                            <div class="form-text pt-1">Allowed file types: png, jpg, jpeg.</div>
+                        <div class="col-lg-12 mb-1">
+                            <label class="col-form-label required fw-semibold fs-6">Name</label>
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter User Name" name="user_name" id="user_name" value="<?php echo $user_data_header ? $user_data_header->name : ''; ?>"/>
+                            <span id="user_name_err" class="text-danger"></span>
                         </div>
-                    <div class="col-lg-12 mb-1">
-                        <label class="col-form-label required fw-semibold fs-6">Name</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter User Name" value="Amuthan B"/>
-                    </div>
-                    <div class="col-lg-12 mb-1">
-                        <label class="col-form-label required fw-semibold fs-6">Mobile No</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Mobile Number" value="9286562312" />
-                    </div>
-                    <div class="col-lg-12 mb-1">
-                        <label class="col-form-label fw-semibold fs-6">Email ID</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Email ID" value="amuthan@gmail.com" />
-                    </div>
-                    <!-- <div class="col-lg-12">
-                        <label class="col-form-label required fw-semibold fs-6">Username</label>
-                        <div class="fv-row">
-                            <input type="text" id="" name="" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Member Name" value="vetrimarand123">
-                            <div class="fv-plugins-message-container invalid-feedback"></div>
+                        <div class="col-lg-12 mb-1">
+                            <label class="col-form-label required fw-semibold fs-6">Mobile No</label>
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter Mobile Number" id="phone_no" name="phone_no" maxlength="10" pattern="^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$" title="Enter Valid mobile number ex.6311111111" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                            value="<?php echo $user_data_header ? $user_data_header->phone_no : ''; ?>"  />
+                            <span id="phone_no_err" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <label class="col-form-label required fw-semibold fs-6">Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control form-control-lg form-control-solid" placeholder="Enter Password" name="password_my" id="password_my" value="vetrimarand@123">
-                            <span class="input-group-text border-gray-500">
-                                <a href="javascript:;" id="pwd_eye_opn_my">
-                                    <i class="fa-solid fa-eye eyc fs-5"></i>
-                                </a>
-                                <a href="javascript:;"  style="display:none;">
-                                    <i class="fa-solid fa-eye-slash fs-5"></i>
-                                </a>
-                            </span>
+                        <div class="col-lg-12 mb-1">
+                            <label class="col-form-label fw-semibold fs-6">Email ID</label>
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter Email ID" name="email_id" id="email_id" value="<?php echo $user_data_header ? $user_data_header->email_id : ''; ?>" />
+                            
+                            <span id="email_id_err" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <label class="col-form-label required fw-semibold fs-6">Transaction Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control form-control-lg form-control-solid" placeholder="Enter Transaction Password" name="trans_password_my" id="trans_password_my" value="1234">
-                            <span class="input-group-text border-gray-500">
-                                <a href="javascript:;" id="trans_pwd_eye_opn_my">
-                                    <i class="fa-solid fa-eye eyc fs-5"></i>
-                                </a>
-                                <a href="javascript:;"  style="display:none;">
-                                    <i class="fa-solid fa-eye-slash fs-5"></i>
-                                </a>
-                            </span>
+                        <!-- <div class="col-lg-12">
+                            <label class="col-form-label required fw-semibold fs-6">Username</label>
+                            <div class="fv-row">
+                                <input type="text" id="" name="" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Member Name" value="vetrimarand123">
+                                <div class="fv-plugins-message-container invalid-feedback"></div>
+                            </div>
                         </div>
-                    </div> -->
+                        <div class="col-lg-12">
+                            <label class="col-form-label required fw-semibold fs-6">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg form-control-solid" placeholder="Enter Password" name="password_my" id="password_my" value="vetrimarand@123">
+                                <span class="input-group-text border-gray-500">
+                                    <a href="javascript:;" id="pwd_eye_opn_my">
+                                        <i class="fa-solid fa-eye eyc fs-5"></i>
+                                    </a>
+                                    <a href="javascript:;"  style="display:none;">
+                                        <i class="fa-solid fa-eye-slash fs-5"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <label class="col-form-label required fw-semibold fs-6">Transaction Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control form-control-lg form-control-solid" placeholder="Enter Transaction Password" name="trans_password_my" id="trans_password_my" value="1234">
+                                <span class="input-group-text border-gray-500">
+                                    <a href="javascript:;" id="trans_pwd_eye_opn_my">
+                                        <i class="fa-solid fa-eye eyc fs-5"></i>
+                                    </a>
+                                    <a href="javascript:;"  style="display:none;">
+                                        <i class="fa-solid fa-eye-slash fs-5"></i>
+                                    </a>
+                                </span>
+                            </div>
+                        </div> -->
+                        <input type="hidden" name="edit_id_super" id="edit_id_super" value="<?php echo $user_data_header->user_login_credential_id ? $user_data_header->user_login_credential_id : ''; ?>">
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mt-4">
+                        <a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
+                        <button type="submit"  class="btn btn-sm btn-primary" id="btnsubmit">Update My Profile</button>
+                    </div>
                 </div>
-                <div class="d-flex align-items-center justify-content-center mt-4">
-                    <a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
-                    <a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Update My Profile</a>
-                </div>
-            </div>
+            </form>
         </div>
         <!--end::Modal dialog-->
     </div>
 </div>
 <!--end::Modal - Update My Profile-->
+<script>
+    function Edit_validate(){
+        var err =0;
+        var name = $('#user_name').val();
+        if(name ==''){
+            $('#user_name_err').html('Name is required..!');
+            err++;
+        }else{
+            $('#user_name_err').html('');
+        }
+        var phone = $('#phone_no').val();
+        if(phone ==''){
+            $('#phone_no_err').html('Phone No is required..!');
+            err++;
+        }else{
+            $('#phone_no_err').html('');
+        }
+        var eamil = $('#email_id').val();
+        if(eamil ==''){
+            $('#email_id_err').html('Email Id is required..!');
+            err++;
+        }else{
+            $('#email_id_err').html('');
+        }
+
+        if (err > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>

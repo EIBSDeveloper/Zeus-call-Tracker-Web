@@ -59,6 +59,8 @@ function get_time_ago($time){
     }
 }
 
+
+
 // end
 
 function get_next_User_filename($upload_path) {
@@ -97,7 +99,7 @@ function last_login($user_id){
     return $last_data ? $last_data->log_in_time : null;
 }
 
-// incoming call 
+// incoming call package date
 function incoming_call_count($user_id){
     $ci = &get_instance();
     $ci->load->database();
@@ -134,7 +136,7 @@ function incoming_call_count($user_id){
         return $incoming_call_count ? $incoming_call_count : 0;
 }
 
-// outcoming_call  
+// outcoming_call package date
 function outcoming_call_count($user_id){
     $ci = &get_instance();
     $ci->load->database();
@@ -178,7 +180,7 @@ function outcoming_call_count($user_id){
 
 
 
-// missed_call  
+// missed_call  package date
 function missed_call_count($user_id){
 
     $ci = &get_instance();
@@ -221,7 +223,7 @@ function missed_call_count($user_id){
 }
 
 
-// rejected_call  
+// rejected_call  by package date
 function rejected_call_count($user_id){
     $ci = &get_instance();
     $ci->load->database();
@@ -258,6 +260,334 @@ function rejected_call_count($user_id){
         return $rejected_call ? $rejected_call : 0;
 
 }
+
+
+// incoming call current_month by caller_id
+function incoming_call_month($user_id,$call_start_date,$call_end_date){
+    $ci = &get_instance();
+    $ci->load->database();
+    $sub_id= $ci->session->userdata['user_id'];
+		$subquery = $ci->db->select('phone_no')
+    	->from('company_cug_detail')
+    	->get()
+    	->result_array(); // Fetch all phone numbers as an array
+    $package_details=$ci->db->select('b.start_date,b.end_date')
+    ->from('subscriber b')
+    ->where_not_in('b.status', [2,3])
+    ->where('b.user_id', $sub_id)
+    ->group_by('b.subscriber_id')
+    ->get()
+    ->row();
+
+		// Get the incoming call count excluding the phone numbers in company_cug_detail
+		$incoming_call_count = $ci->db->select('COUNT(*) as incoming_call')
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->where('a.user_id', $user_id) // Filter by user ID
+			->where('a.call_date >=', $call_start_date) // Start date filter
+			->where('a.call_date <=', $call_end_date) // End date filter
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 1) // Status is 1
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
+		
+		$incoming_call_count= $incoming_call_count->incoming_call;
+
+        return $incoming_call_count ? $incoming_call_count : 0;
+}
+
+// outcoming_call current_month by caller_id
+function outcoming_call_month($user_id,$call_start_date,$call_end_date){
+    $ci = &get_instance();
+    $ci->load->database();
+    $sub_id= $ci->session->userdata['user_id'];
+		$subquery = $ci->db->select('phone_no')
+    	->from('company_cug_detail')
+    	->get()
+    	->result_array(); // Fetch all phone numbers as an array
+
+        $package_details=$ci->db->select('b.start_date,b.end_date')
+        ->from('subscriber b')
+        ->where_not_in('b.status', [2,3])
+        ->where('b.user_id', $sub_id)
+        ->group_by('b.subscriber_id')
+        ->get()
+        ->row();
+
+		// Get the outgoing call count excluding the phone numbers in company_cug_detail
+		$outgoing_call_log_result = $ci->db->select('COUNT(*) as outgoing_call')
+		->from('call_log a')
+		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+		->where('a.user_id', $user_id) // Filter by user ID
+		->where('a.call_date >=', $call_start_date) // Start date filter
+		->where('a.call_date <=', $call_end_date) // End date filter
+		->where('a.redirected_to', 0) // Redirected to 0
+		->where('a.status', 0) // Status is 0
+		->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->get()
+		->row();
+
+		// Assign the result to a variable
+		$outgoingcall_count = $outgoing_call_log_result->outgoing_call;
+
+        return $outgoingcall_count ? $outgoingcall_count : 0;
+		
+
+}
+
+// missed_call current_month by caller_id
+function missed_call_month($user_id,$call_start_date,$call_end_date){
+
+    $ci = &get_instance();
+    $ci->load->database();
+    $sub_id= $ci->session->userdata['user_id'];
+		$subquery = $ci->db->select('phone_no')
+    	->from('company_cug_detail')
+    	->get()
+    	->result_array(); // Fetch all phone numbers as an array
+
+        $package_details=$ci->db->select('b.start_date,b.end_date')
+        ->from('subscriber b')
+        ->where_not_in('b.status', [2,3])
+        ->where('b.user_id', $sub_id)
+        ->group_by('b.subscriber_id')
+        ->get()
+        ->row();
+       
+
+	
+		$missed_call_log_result = $ci->db->select('COUNT(*) as missed_call')
+		->from('call_log a')
+		->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+		->where('a.user_id', $user_id) // Filter by user ID
+		->where('a.call_date >=', $call_start_date) // Start date filter
+		->where('a.call_date <=', $call_end_date) // End date filter
+		->where('a.redirected_to', 0) // Redirected to 0
+		->where('a.status', 2) // Status is 2 for missed calls
+		->where('a.missed_status', 0) // Missed status is 0
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->get()
+		->row();
+		// Assign the result to a variable
+		$missedcall_count= $missed_call_log_result->missed_call;
+
+        return $missedcall_count ? $missedcall_count : 0;
+
+
+}
+
+
+// rejected_call current_month by caller_id
+function rejected_call_month($user_id,$call_start_date,$call_end_date){
+    $ci = &get_instance();
+    $ci->load->database();
+    $sub_id= $ci->session->userdata['user_id'];
+		$subquery = $ci->db->select('phone_no')
+    	->from('company_cug_detail')
+    	->get()
+    	->result_array(); // Fetch all phone numbers as an array
+        $package_details=$ci->db->select('b.start_date,b.end_date')
+        ->from('subscriber b')
+        ->where_not_in('b.status', [2,3])
+        ->where('b.user_id', $sub_id)
+        ->group_by('b.subscriber_id')
+        ->get()
+        ->row();
+		$rejected_call_log_result = $ci->db->select('COUNT(*) as rejected_call')
+			->from('call_log a')
+			->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+			->where('a.user_id', $user_id) // Filter by user ID
+			->where('a.call_date >=', $call_start_date) // Start date filter
+			->where('a.call_date <=', $call_end_date) // End date filter
+			->where('a.redirected_to', 0) // Redirected to 0
+			->where('a.status', 3) // Status is 3 for rejected calls
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->get()
+			->row();
+
+		// Assign the result to a variable
+		$rejected_call = $rejected_call_log_result->rejected_call;
+
+        return $rejected_call ? $rejected_call : 0;
+
+}
+
+// weekly datas 
+function incoming_call_weekly($user_id, $call_start_date, $call_end_date) {
+    $ci = &get_instance();
+    $ci->load->database();
+
+    // Fetch all phone numbers from company_cug_detail
+    $subquery = $ci->db->select('phone_no')
+        ->from('company_cug_detail')
+        ->get()
+        ->result_array();
+
+    $excluded_phone_numbers = array_column($subquery, 'phone_no');
+
+    // Array to hold daily call counts
+    $weekly_counts = [];
+
+    // Iterate through each day of the week
+    $current_date = $call_start_date;
+    while (strtotime($current_date) <= strtotime($call_end_date)) {
+        $next_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+
+        // Get the incoming call count for the current day
+        $incoming_call_count = $ci->db->select('COUNT(*) as incoming_call')
+            ->from('call_log a')
+            ->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+            ->where('a.user_id', $user_id) // Filter by user ID
+            ->where('a.call_date >=', $current_date) // Current day start
+            ->where('a.call_date <', $next_date) // Current day end (exclusive)
+            ->where('a.redirected_to', 0) // Redirected to 0
+            ->where('a.status', 1) // Status is 1
+            ->where_not_in('b.phone_no', $excluded_phone_numbers) // Exclude phone numbers
+            ->get()
+            ->row();
+
+        // Add the count for the current day to the array
+        $weekly_counts[] = $incoming_call_count->incoming_call ?? 0;
+
+        // Move to the next day
+        $current_date = $next_date;
+    }
+
+    return $weekly_counts;
+}
+function outcoming_call_weekly($user_id, $call_start_date, $call_end_date) {
+    $ci = &get_instance();
+    $ci->load->database();
+
+    // Fetch all phone numbers from company_cug_detail
+    $subquery = $ci->db->select('phone_no')
+        ->from('company_cug_detail')
+        ->get()
+        ->result_array();
+
+    $excluded_phone_numbers = array_column($subquery, 'phone_no');
+
+    // Array to hold daily call counts
+    $weekly_counts = [];
+
+    // Iterate through each day of the week
+    $current_date = $call_start_date;
+    while (strtotime($current_date) <= strtotime($call_end_date)) {
+        $next_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+
+        // Get the outgoing call count for the current day
+        $outgoing_call_count = $ci->db->select('COUNT(*) as outgoing_call')
+            ->from('call_log a')
+            ->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+            ->where('a.user_id', $user_id) // Filter by user ID
+            ->where('a.call_date >=', $current_date) // Current day start
+            ->where('a.call_date <', $next_date) // Current day end (exclusive)
+            ->where('a.redirected_to', 0) // Redirected to 0
+            ->where('a.status', 0) // Status is 0
+            ->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
+            ->where_not_in('b.phone_no', $excluded_phone_numbers) // Exclude phone numbers
+            ->get()
+            ->row();
+
+        // Add the count for the current day to the array
+        $weekly_counts[] = $outgoing_call_count->outgoing_call ?? 0;
+
+        // Move to the next day
+        $current_date = $next_date;
+    }
+
+    return $weekly_counts;
+}
+function missed_call_weekly($user_id, $call_start_date, $call_end_date) {
+    $ci = &get_instance();
+    $ci->load->database();
+
+    // Fetch all phone numbers from company_cug_detail
+    $subquery = $ci->db->select('phone_no')
+        ->from('company_cug_detail')
+        ->get()
+        ->result_array();
+
+    $excluded_phone_numbers = array_column($subquery, 'phone_no');
+
+    // Array to hold daily call counts
+    $weekly_counts = [];
+
+    // Iterate through each day of the week
+    $current_date = $call_start_date;
+    while (strtotime($current_date) <= strtotime($call_end_date)) {
+        $next_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+
+        // Get the missed call count for the current day
+        $missed_call_count = $ci->db->select('COUNT(*) as missed_call')
+            ->from('call_log a')
+            ->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+            ->where('a.user_id', $user_id) // Filter by user ID
+            ->where('a.call_date >=', $current_date) // Current day start
+            ->where('a.call_date <', $next_date) // Current day end (exclusive)
+            ->where('a.redirected_to', 0) // Redirected to 0
+            ->where('a.status', 2) // Status is 2 for missed calls
+            ->where('a.missed_status', 0) // Missed status is 0
+            ->where_not_in('b.phone_no', $excluded_phone_numbers) // Exclude phone numbers
+            ->get()
+            ->row();
+
+        // Add the count for the current day to the array
+        $weekly_counts[] = $missed_call_count->missed_call ?? 0;
+
+        // Move to the next day
+        $current_date = $next_date;
+    }
+
+    return $weekly_counts;
+}
+function rejected_call_weekly($user_id, $call_start_date, $call_end_date) {
+    $ci = &get_instance();
+    $ci->load->database();
+
+    // Fetch all phone numbers from company_cug_detail
+    $subquery = $ci->db->select('phone_no')
+        ->from('company_cug_detail')
+        ->get()
+        ->result_array();
+
+    $excluded_phone_numbers = array_column($subquery, 'phone_no');
+
+    // Array to hold daily call counts
+    $weekly_counts = [];
+
+    // Iterate through each day of the week
+    $current_date = $call_start_date;
+    while (strtotime($current_date) <= strtotime($call_end_date)) {
+        $next_date = date('Y-m-d', strtotime($current_date . ' +1 day'));
+
+        // Get the rejected call count for the current day
+        $rejected_call_count = $ci->db->select('COUNT(*) as rejected_call')
+            ->from('call_log a')
+            ->join('contact_book b', 'a.contact_book_id = b.contact_book_id', 'left')
+            ->where('a.user_id', $user_id) // Filter by user ID
+            ->where('a.call_date >=', $current_date) // Current day start
+            ->where('a.call_date <', $next_date) // Current day end (exclusive)
+            ->where('a.redirected_to', 0) // Redirected to 0
+            ->where('a.status', 3) // Status is 3 for rejected calls
+            ->where_not_in('b.phone_no', $excluded_phone_numbers) // Exclude phone numbers
+            ->get()
+            ->row();
+
+        // Add the count for the current day to the array
+        $weekly_counts[] = $rejected_call_count->rejected_call ?? 0;
+
+        // Move to the next day
+        $current_date = $next_date;
+    }
+
+    return $weekly_counts;
+}
+
+
+
 
 
 
@@ -334,14 +664,19 @@ function get_general_settings()
   return $result;
 }
 
-// get subscriber details
+
 function get_subscriber_details($id)
 {
-	$ci = &get_instance();
+	
+    $ci = &get_instance();
 	$ci->load->database();
-	$result = $ci->db->select('*')->from('user')->where('user_id', $id)->get()->row();
-	// $result = $ci->db;
-	// save_query_in_log();
+     $result =  $ci->db->select('u.*, c.company_name') // Selecting all columns from user table and company_name from company table
+    ->from('user u') // Alias for user table
+    ->join('company c', 'u.company_id = c.company_id', 'left') // Join user table with company table on company_id
+    ->where('u.user_id', $id) // Filter based on user_id
+    ->get()
+    ->row();
+
 	return $result;
 }
 

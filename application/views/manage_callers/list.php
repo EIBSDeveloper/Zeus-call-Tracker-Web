@@ -395,9 +395,46 @@
 																		</form>
 																	</div>
 																</div>
-																<a href="javascript:;" class="btn btn-primary btn-sm">
-																	<span class="me-2"><i class="fa-solid fa-file-export fs-7"></i></span>Export
-																</a>
+																<div>
+																	<button type="button" type="button"
+																		data-kt-menu-trigger="click"
+																		data-kt-menu-placement="bottom-end"
+																		class="btn btn-sm btn-primary"> <i
+																			class="fa-solid fa-file-export fs-7"></i>
+																		Export</button>
+																	<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px py-3"
+																		data-kt-menu="true">
+																		<div data-kt-user-table-filter="form_1">
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3"
+																					id="export_excel">
+																					<i
+																						class="fas fa-file-excel fs-4 me-3"></i>
+																					Excel
+																				</a>
+																			</div>
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3" id="export_csv">
+																					<i
+																						class="fas fa-file-csv fs-4 me-3"></i>
+																					CSV
+																				</a>
+																			</div>
+																			<div class="menu-item px-3">
+																				<a href="javascript:;"
+																					class="menu-link px-3" id="export_pdf">
+																					<i
+																						class="fas fa-file-pdf fs-4 me-3"></i>
+																					PDF
+																				</a>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																
+																
 																<?php if($user_data->available_callers <$user_data->no_of_callers){?>
 																<a href="javascript:;" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_add_callers">
 																	<span class="me-2"><i class="fa-solid fa-plus fs-7 fw-bold"></i></span>Add Callers
@@ -595,132 +632,6 @@
 																	</tr>
 																		<?php }?>
 																	<?php }?>
-
-																	<!-- <tr>
-																		<td>
-																			<div class="d-flex align-items-center">
-																				<a class="d-block overlay text-center me-3" href="< ?php echo base_url(); ?>assets/Images/member_2.png" data-fslightbox="lightbox-basic_list">
-																				    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_2.png')">
-																				    </div>
-																				    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																				        <i class="bi bi-eye-fill text-white fs-2"></i>
-																				    </div>
-																			 	</a>
-																			 	<div class="mb-0 me-2">
-																					<label class="fs-7 fw-semibold text-black">Thensidhaa M</label>
-																					<div class="d-block">
-																						<label class="badge badge-success fs-7 fw-bold text-white" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mobile No">9894444710</label>
-																					</div>
-																				</div>
-																		 	</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black">Production</label>
-																			<div class="d-block">
-																				<label class="badge badge-warning fs-7 text-black me-1">Silver Package</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<div class="badge badge-secondary fw-bold text-black fs-7">29-Sep-2024 11:20:40 PM</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">02</label>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">02</label>
-																			<div class="d-block text-center">
-																				<label class="badge badge-success fs-8 text-white me-1">98 %</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">0</label>
-																			<div class="d-block text-center">
-																				<label class="badge badge-info fs-8 text-white me-1">100 %</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black text-center fw-bold">0</label>
-																		</td>
-																		<td>
-																			<div class="form-check form-switch form-check-custom form-check-solid">
-																			    <input class="form-check-input w-35px h-20px" type="checkbox" checked />
-																			</div>
-																		</td>
-																		<td>
-																			<span class="text-end">
-																				<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_deactive_callers">
-																					<i class="fa-solid fa-ban fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Deactive Caller"></i>
-																				</a>
-																				<a href="< ?php echo base_url(); ?>Manage_callers/view_callers" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																					<i class="fa-solid fa-clock-rotate-left fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="History"></i>
-																				</a>
-																				<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_callers">
-																					<i class="fa-solid fa-pen-to-square fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit"></i>
-																				</a>
-																			</span>
-																		</td>
-																	</tr> -->
-																	<!-- <tr style="background-color: #ffa5a5 !important;">
-																		<td>
-																			<div class="d-flex align-items-center">
-																				<a class="d-block overlay text-center me-3" href="< ?php echo base_url(); ?>assets/Images/member_1.png" data-fslightbox="lightbox-basic_list">
-																				    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_1.png')">
-																				    </div>
-																				    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																				        <i class="bi bi-eye-fill text-white fs-2"></i>
-																				    </div>
-																			 	</a>
-																			 	<div class="mb-0 me-2">
-																					<label class="fs-7 fw-semibold text-black">Raghu S</label>
-																					<div class="d-block">
-																						<label class="badge badge-success fs-7 fw-bold text-white" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Mobile No">8220018177</label>
-																					</div>
-																				</div>
-																		 	</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black">Production</label>
-																			<div class="d-block">
-																				<label class="badge badge-warning fs-7 text-black me-1">Gold Package</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<div class="badge badge-secondary fw-bold text-black fs-7">28-Sep-2024 10:30:40 AM</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">09</label>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">24</label>
-																			<div class="d-block text-center">
-																				<label class="badge badge-success fs-8 text-white me-1">76 %</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black fw-bold text-center">32</label>
-																			<div class="d-block text-center">
-																				<label class="badge badge-info fs-8 text-white me-1">68 %</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black text-center fw-bold">11</label>
-																		</td>
-																		<td>
-																			<div class="form-check form-switch form-check-custom form-check-solid">
-																			    <input class="form-check-input w-35px h-20px" type="checkbox" disabled />
-																			</div>
-																		</td>
-																		<td>
-																			<span class="text-end">
-																				<a href="< ?php echo base_url(); ?>Manage_callers/view_callers" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																					<i class="fa-solid fa-clock-rotate-left fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="History"></i>
-																				</a>
-																				<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_callers">
-																					<i class="fa-solid fa-pen-to-square fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit"></i>
-																				</a>
-																			</span>
-																		</td>
-																	</tr>-->
 																</tbody>
 															</table>
 															<div class="row">

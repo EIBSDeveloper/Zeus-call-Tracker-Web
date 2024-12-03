@@ -221,12 +221,32 @@
 														<!-- <a href="javascript:;" class="btn btn-primary btn-sm">
 															<span class="me-2"><i class="fa-solid fa-file-export fs-7"></i></span>Export
 														</a> -->
+
 														<a href="<?php echo base_url(); ?>Landing_page" class="btn btn-primary btn-sm">
 															<span class="me-2"><i class="fa-solid fa-plus fs-7 fw-bold"></i></span>Purchase Packages
 														</a>
 													</div>
 													<?php $common_date= get_general_settings()->date_format ?? 'd-M-Y'; ?>
 													<div class="row">
+														<div class="col-lg-12 mb-4">
+															<?php $perpage_count = $perpage ? $perpage : 10; ?>
+															<div class="col-lg-2">
+																<span>Show Entries</span>
+																<br>
+																<select id="perpage" name="perpage" class="form-select form-select-sm  form-select-solid w-80px" data-width="80px" data-control="select2" onchange="sort_filter(this.value);">
+
+																	<?php
+																	$options = [10, 25, 100, 500]; // Define available options
+																	?>
+																	<?php foreach ($options as $option): ?>
+																		<option value="<?php echo $option; ?>" <?php echo ($perpage_count == $option) ? 'selected' : ''; ?>>
+																			<?php echo $option; ?>
+																		</option>
+																	<?php endforeach; ?>
+
+																</select>
+															</div>
+														</div>
 														<div class="col-lg-12">
 															<table class="table align-middle table-striped table-hover fs-7 gy-3 gs-2 list_page">
 																<thead>
@@ -241,55 +261,7 @@
 																	</tr>
 																</thead>
 																<tbody class="text-gray-800 fw-bold fs-7">
-																	<!-- <tr>
-																		<td align="start">
-																			<label>28-Sep-2024</label>
-																			<div class="d-block">
-																				<label class="badge badge-warning text-black fs-7" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Days">30 Days</label>
-																			</div>
-																		</td>
-																		<td class="text-center">
-																			<label class="fs-7 text-black">Silver Package</label>
-																			<label class="fs-7 text-black ms-1 me-1">/</label>
-																			<label class="fs-7 text-black">1 Month</label>
-																			<div class="d-block text-center mt-1">
-																				<label class="badge badge-danger fs-8 text-white me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Available Caller Count">07</label>
-																				<label class="fs-7 text-black ms-1 me-1">/</label>
-																				<label class="badge badge-info fs-8 text-white me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Total Caller Count">10</label>
-																			</div>
-																		</td>
-																		<td align="start">
-																			<div class="badge badge-success fs-7 me-2">28-Sep-2024</div>
-																			<div class="d-block mt-1">	
-																				<div class="badge badge-danger fs-7">27-Oct-2024</div>
-																			</div>
-																		</td>
-																		<td align="right">
-																			<label class="fs-6 text-black">
-																				<i class="fa-solid fa-indian-rupee-sign fs-7 text-black"></i>
-																			</label>
-																			<label class="fs-6 text-black">2,500</label>
-																		</td>
-																		<td align="start">
-																			<div class="text-black fw-bold fs-7">G-Pay</div>
-																			<div class="d-block">
-																				<div class="badge badge-secondary text-black fs-7">TTCNI022000800594</div>
-																			</div>
-																		</td>
-																		<td>
-																			<div class="badge badge-warning text-black fw-bold fs-7 rounded">New Purchased</div>
-																		</td>
-																		<td>
-																			<span class="text-end">
-																				<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_buy_more_callers">
-																					<i class="fa-solid fa-cart-plus fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Buy More Callers"></i>
-																				</a>
-																				<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_subscription_history_1_month">
-																					<i class="fa-solid fa-clock-rotate-left fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="History"></i>
-																				</a>
-																			</span>
-																		</td>
-																	</tr> -->
+																	
 																	<?php if(isset($subscriber_data)){?>
 																		<?php foreach ($subscriber_data as $i => $sublist) { ?>
 																			<?php 
@@ -358,6 +330,108 @@
 																	<?php }?>
 																</tbody>
 															</table>
+															<div class="row">
+																<div class="col-lg-3">Showing <?php echo $page; ?> to <?php echo (($page + $perpage_count) > count($subscriber_data)) ? count($subscriber_data) : $page + $perpage_count; ?> of <?php echo count($subscriber_data); ?> entries</div>
+																<div class="col-lg-9 d-flex justify-content-end">
+																	<?php
+																	$coun = ceil($count ?? 10 / 10);
+																	$c_page = isset($_GET['page']) ? $_GET['page'] : 1;
+																	?>
+																	<?php
+																	function get_paging_info1($tot_rows, $pp, $curr_page)
+																	{
+																		$pages = ceil($tot_rows / $pp); // calc pages
+
+																		$data = array(); // start out array
+																		$data['si']        = ($curr_page * $pp) - $pp; // what row to start at
+																		$data['pages']     = $pages;                   // add the pages
+																		$data['curr_page'] = $curr_page;               // Whats the current page
+																		$paging_info['curr_url'] = base_url();
+																		return $data; //return the paging data
+
+																	} ?>
+																	<?php $paging_info = get_paging_info1($count ?? 10, 10, $c_page); ?>
+
+																	<form method="POST" id="filter_form" action="" enctype="multipart/form-data">
+																		<!-- SET FILTER pAGINATION -->
+																		<input type="hidden" id="package_id_fill" name="package_id_fill" value="<?php echo $package_id_fill ?? ''; ?>">
+																		<input type="hidden" id="subscriber_status_fill" name="subscriber_status_fill" value="<?php echo $subscriber_status_fill ?? ''; ?>">
+																		<input type="hidden" id="dt_fill_select_value" name="dt_fill_select_value" value="<?php echo $dt_fill ?? ''; ?>">
+																		<input type="hidden" id="from_date_fillter_textbox" name="from_date_fillter_textbox" value="<?php echo $from_date_fillter ?? ''; ?>">
+																		<input type="hidden" id="to_date_fillter_textbox" name="to_date_fillter_textbox" value="<?php echo $to_date_fillter ?? ''; ?>">																																			
+																		<input type="hidden" class="sorting_filter_class" name="sorting_filter" id="sorting_filter" value="<?php echo $perpage ? $perpage : 10; ?>" />
+
+																		<ul class="pagination" style="float:right;">
+																			<!-- If the current page is more than 1, show the First and Previous links -->
+																			<?php if ($paging_info['curr_page'] > 1) : ?>
+
+																				<li class='paginate_button page-item move_to' value="<?php echo ($paging_info['curr_page'] - 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' title='Page <?php echo ($paging_info['curr_page'] - 1); ?>'>
+																						<< </a>
+																				</li>
+
+																			<?php endif; ?>
+
+
+
+																			<?php
+																			//setup starting point
+
+																			//$max is equal to number of links shown
+																			$max = 3;
+																			if ($paging_info['curr_page'] < $max)
+																				$sp = 1;
+																			elseif ($paging_info['curr_page'] >= ($paging_info['pages'] - floor($max / 2)))
+																				$sp = $paging_info['pages'] - $max + 1;
+																			elseif ($paging_info['curr_page'] >= $max)
+																				$sp = $paging_info['curr_page']  - floor($max / 2);
+																			?>
+
+																			<!-- If the current page >= $max then show link to 1st page -->
+																			<?php if ($paging_info['curr_page'] >= $max) : ?>
+
+																				<li class='paginate_button page-item move_to' value="1"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' onclick="form_submit()" title='Page 1'>1</a></li>
+																				<!--<li class='paginate_button page-item '><input type="submit" name="first_page" value="Update" />  </li>-->
+																				..
+																			<?php endif; ?>
+																			<!-- Loop though max number of pages shown and show links either side equal to $max / 2 -->
+																			<?php for ($i = $sp; $i <= ($sp + $max - 1); $i++) : ?>
+
+																				<?php
+																				if ($i > $paging_info['pages'])
+																					continue;
+																				?>
+
+																				<?php if ($paging_info['curr_page'] == $i) : ?>
+
+																					<li class='paginate_button page-item active move_to' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer text-hover-dark' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
+
+																				<?php else : ?>
+
+																					<li class='paginate_button page-item move_to ' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
+
+																				<?php endif; ?>
+
+																			<?php endfor; ?>
+																			<!-- If the current page is less than say the last page minus $max pages divided by 2-->
+																			<!-- < ?php if ($paging_info['curr_page'] < ($paging_info['pages'] - floor($max / 2))) : ?>
+
+																				..
+																				<li class='paginate_button page-item  move_to' value="< ?php echo $paging_info['pages']; ?>"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer' title='Page < ?php echo $paging_info['pages']; ?>'>< ?php echo $paging_info['pages']; ?></a></li>
+
+																			< ?php endif; ?> -->
+
+																			<!-- Show last two pages if we're not near them -->
+																			<?php if ($paging_info['curr_page'] < $paging_info['pages']) : ?>
+
+																				<li class='paginate_button page-item move_to ' value="<?php echo ($paging_info['curr_page'] + 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer ' title='Page <?php echo ($paging_info['curr_page'] + 1); ?>'> >> </a></li>
+
+
+
+																			<?php endif; ?>
+																		</ul>
+																	</form>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -904,6 +978,7 @@
 				<!--end::Modal header-->
 				<div class="modal-body pt-0 pb-15 px-5 px-xl-10">
 				<!--begin::Heading-->
+				<form method="POST" enctype="multipart/form-data" action="<?php echo base_url(); ?>Manage_callers/renew_subscriber" id="renewal_caller_form">
 				<div class="text-center">
 					<h1 class="mb-6">
 						<label>Renewal Package &nbsp; - &nbsp;</label>
@@ -915,37 +990,37 @@
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">Subscriber</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
-							<label class="col-6 fs-5 fw-bold" id="subscriber_name_renew">Abdul Nizamuddin M</label>
+							<label class="col-6 fs-5 fw-bold" id="subscriber_name_renew"></label>
 						</div>
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">Company</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
-							<label class="col-6 fs-5 fw-bold" id="company_name_renew">Spacedot Private Limited</label>
+							<label class="col-6 fs-5 fw-bold" id="company_name_renew"></label>
 						</div>
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">Mobile No</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
-							<label class="col-6 fs-5 fw-bold" id="phn_renew">9685747485</label>
+							<label class="col-6 fs-5 fw-bold" id="phn_renew"></label>
 						</div>
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">Email ID</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
-							<label class="col-6 fs-5 fw-bold" id="email_renew">abdulnizamuddinm@gmail.com</label>
+							<label class="col-6 fs-5 fw-bold" id="email_renew"></label>
 						</div>
 					</div>
 					<div class="col-lg-6">
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">Package</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
-							<label class="col-6 fs-5 fw-bold" id="packg_renew">Gold Package</label>
+							<label class="col-6 fs-5 fw-bold" id="packg_renew"></label>
 						</div>
 						<div class="row mb-2">
 							<label class="col-5 fs-6 fw-semibold">No. of Callers / Duration</label>
 							<label class="col-1 fs-6 fw-bold">:</label>
 							<div class="col-6 fs-5 fw-bold">
-								<label class="badge badge-warning text-black fs-6 fw-bold" id="no_of_caller_renew">15</label>
+								<label class="badge badge-warning text-black fs-6 fw-bold" id="no_of_caller_renew"></label>
 								<label class="fs-5 fw-bold ms-1 me-1">/</label>
-								<label class="fs-5 fw-bold" id="duration_renew">6 Month</label>
+								<label class="fs-5 fw-bold" id="duration_renew"></label>
 							</div>
 						</div>
 						<div class="row mb-2">
@@ -970,14 +1045,14 @@
 					<div class="col-lg-3">
 						<label class="col-form-label fw-semibold fs-6">Package</label>
 						<div class="fv-row">
-							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Package" value="Gold Package - 6 Months"  disabled>
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Package" value="" id="renew_package_name" value="renew_package_name"  disabled>
 							<div class="fv-plugins-message-container invalid-feedback"></div>
 						</div>
 					</div>
 									<div class="col-lg-3">
 						<label class="col-form-label required fw-semibold fs-6">No.of Callers</label>
 						<div class="fv-row">
-							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" value="15" id="add_more_caller">
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" value="" id="renew_add_more_caller" name="renew_add_more_caller">
 							<div class="fv-plugins-message-container invalid-feedback"></div>
 						</div>
 					</div>
@@ -1000,7 +1075,7 @@
 					<div class="col-lg-3">
 						<label class="col-form-label fw-semibold fs-6">End Date</label>
 						<div class="fv-row">
-							<input type="text" class="form-control form-control-lg_1 form-control-solid" value="<?php echo date('d-M-Y', strtotime("+180 days")); ?>" id="renew_start_date" disabled>
+							<input type="text" class="form-control form-control-lg_1 form-control-solid" value="" id="renew_end_date" disabled>
 							<div class="fv-plugins-message-container invalid-feedback"></div>
 						</div>
 					</div>
@@ -1029,10 +1104,11 @@
 						</div>
 					</div>
 					<div class="d-flex align-items-center justify-content-end mt-8">
-									<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
-									<a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Pay Now</a>
-								</div>
+						<a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
+						<button type="button" class="btn btn-sm btn-primary" id="submit_renew_caller" onclick="renew_caller_validation()">Pay Now</button>
+					</div>
 				</div>
+				</form>
 			</div>
 			<!--end::Modal dialog-->
 		</div>
@@ -1364,35 +1440,7 @@
 				}
 			}
 		</script>
-		<script>
-			$(".list_page").DataTable({
-				// "ordering": false,
-				"aaSorting":[],
-				// "pagingType": 'simple_numbers',
-				"pagingType": "full_numbers",
-				// "sorting":false,
-				// "paging": false,
-				// "buttons": [
-				//             'copy', 'csv', 'excel', 'pdf', 'print'
-				//         ],
-				 "language": {
-				  "lengthMenu": "Show _MENU_",
-				 },
-				  // "pageLength": 5,
-				 "dom":
-				  "<'row'" +
-				  "<'col-sm-6 d-flex align-items-center justify-conten-start my-3'l>" +
-				  "<'col-sm-6 d-flex align-items-center justify-content-end my-3'f>" +
-				  ">" +
-
-				  "<'table-responsive'tr>" +
-
-				  "<'row'" +
-				  "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
-				  "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
-				  ">"
-				});
-		</script>
+		
 		<script>
 			$(".list_page_scroll").DataTable({
 				"ordering": false,
@@ -1672,11 +1720,13 @@
 							var duration =response.duration=="1" ?response.period+" Month": (response.duration=="2" ? response.period+" Year" :"Life Time")
 							$('#subscriber_id_renew').val(response.subscriber_id);
 							$('#subscriber_name_renew').text(response.name);
-							$('#company_name_renew').text(response.company_name);
+							$('#company_name_renew').text(response.sub_company_name);
 							$('#phn_renew').text(response.mobile_no);
 							$('#email_renew').text(response.email_id);
 							$('#no_of_caller_renew').text(response.no_of_callers);
+							$('#renew_add_more_caller').val(response.no_of_callers);
 							$('#packg_renew').text(response.package_name);
+							$('#renew_package_name').val(response.package_name);
 							$('#start_date_renew').text(formatDate(response.start_date));
 							$('#end_date_renew').text(formatDate(response.end_date));
 							$('#renewal_days_renew').text(response.renewal_days_count + " Days" );
@@ -1685,8 +1735,9 @@
 							var gst_per = $('#gst_per_renew').val(); 
 							var add_caller = $('#renewal_caller').val(); 
 
-							var no_of_caller=response.no_of_callers;
-
+							var no_of_caller=$('#renew_add_more_caller').val();
+							
+							$('#renew_end_date').val(formatDate(response.renewal_end_date));
 							var amount=response.package_amount;
 							var per_caller_amount = amount/no_of_caller;
 							var total_caller_amount =per_caller_amount*add_caller ;
@@ -1708,7 +1759,7 @@
 			function renew_caller_validation () {
 				$("#submit_renew_caller").prop('disabled', true);
 				let err = 0;
-				var no_of_caller = $('#add_more_caller').val();
+				var no_of_caller = $('#renew_add_more_caller').val();
 				// var duration = $('#sub_last_name').val();
 			
 				
@@ -1738,7 +1789,7 @@
 		</script>
 
 		 <!-- view history -->
-		 <script>
+		<script>
 			function view_history_func(val) {
 				$.ajax({
 					type: "POST",
@@ -1760,8 +1811,64 @@
 					}
 				});
 				}
-		  </script>
+		</script>
+<!-- pagination -->
+<script>
+			var DatatablesExtensionButtons = {
+			init: function() {
+				var t;
+				t = $(".list_page").DataTable({
+						"sorting": false,
+						"ordering": false,
+						"paging": false,
+						"info": false,
+						// aaSorting: [],
+						stateSave: true,
+				
 
+						buttons: [
+						
+							{
+								extend: 'excelHtml5',
+								title: 'Subscriber List',
+								exportOptions: {
+									columns: [0, 1, 2, 3]
+								}
+							},
+							{
+								extend: 'csvHtml5',
+								title: 'Subscriber List',
+								exportOptions: {
+									columns: [0, 1, 2, 3]
+								}
+							},
+							{
+								extend: 'pdfHtml5',
+								title: 'Subscriber List',
+								exportOptions: {
+									columns: [0, 1, 2, 3]
+								}
+							},
+						],
+						"language": {
+							"lengthMenu": "Show _MENU_",
+						},
+					}),
+					console.log(t)
+
+					$("#export_excel").on("click", function(e) {
+						e.preventDefault(), t.button(0).trigger()
+					}), $("#export_csv").on("click", function(e) {
+						e.preventDefault(), t.button(1).trigger()
+					}), $("#export_pdf").on("click", function(e) {
+						e.preventDefault(), t.button(2).trigger()
+					})
+			}
+		};
+		jQuery(document).ready(function() {
+			DatatablesExtensionButtons.init()
+		});
+	</script>
 			
 
 
