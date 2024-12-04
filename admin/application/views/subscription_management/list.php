@@ -356,21 +356,21 @@
 																			<div class="badge badge-warning text-black fs-7"><?php echo renewal_days_count($sublist->subscriber_id)?> Days</div>
 																		</td>
 																		<td>
-																			<?php if($sublist->status==0) { ?>
+																			<?php if($sublist->comp_status==0 && $sublist->status !=3) { ?>
 																				<button class="badge badge-success text-white fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">Active Subscriber</button>
 																				<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
 																					<div class="py-3">
 																						<div class="menu-item px-3">
-																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_block_subscriber" onclick="block_func(<?php echo $sublist->user_id;?>,'<?php echo $sublist->name;?>')">Block Subscriber</a>
+																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_block_subscriber" onclick="block_func(<?php echo $sublist->company_id;?>,'<?php echo $sublist->name;?>')">Block Subscriber</a>
 																						</div>
 																					</div>
 																				</div>
-																			<?php } else if($sublist->status == 1) { ?>
+																			<?php } else if($sublist->comp_status == 1 && $sublist->status !=3) { ?>
 																				<button class="badge badge-warning text-black fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true" style="background-color: #FF7F00 !important;">Blocked Subscriber</button>
 																				<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
 																					<div class="py-3">
 																						<div class="menu-item px-3">
-																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber" onclick="unblock_func(<?php echo $sublist->user_id;?>,'<?php echo $sublist->name;?>')">Unblock Subscriber</a>
+																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber" onclick="unblock_func(<?php echo $sublist->company_id;?>,'<?php echo $sublist->name;?>')">Unblock Subscriber</a>
 																						</div>
 																					</div>
 																				</div>
@@ -568,7 +568,7 @@
 				<div class="swal2-html-container" id="swal2-html-container" style="display: block;">Are you sure you want to Unblock Subscriber ?
 					<div class="d-block fw-bold fs-5 py-2">
 					<label id="unblock_name"></label>
-					<input type="hidden" name="user_id" id="unblock_id">
+					<input type="hidden" name="company_id" id="unblock_id">
 					</div>
 				</div>
 				<div class="d-flex justify-content-center align-items-center pt-8">
@@ -596,7 +596,7 @@
 				<div class="swal2-html-container" id="swal2-html-container" style="display: block;">Are you sure you want to Block Subscriber ?
 					<div class="d-block fw-bold fs-5 py-2">
 					<label id="block_name"></label>
-					<input type="hidden" name="user_id" id="block_id">
+					<input type="hidden" name="company_id" id="block_id">
 					</div>
 				</div>
 				<div class="d-flex justify-content-center align-items-center pt-8">

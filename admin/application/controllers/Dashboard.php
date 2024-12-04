@@ -29,10 +29,13 @@ class Dashboard extends CI_Controller {
         $currentYear = date('Y'); // Current year
 
 		$data['active_subscriber'] = $this->db->select('COUNT(*) as count')
-                ->where('status','0')
-                ->where('MONTH(created_at)', $currentMonth)
-                ->where('YEAR(created_at)', $currentYear)
-                ->get('subscriber')
+                ->from('subscriber s')
+                ->join('company c', 'c.company_id = s.company_id', 'left')
+                ->where('s.status', '0')
+                ->where('c.status', '0')
+                ->where('MONTH(s.created_at)', $currentMonth)
+                ->where('YEAR(s.created_at)', $currentYear)
+                ->get()
                 ->row();
 
 		$data['total_subscriber'] = $this->db->select('COUNT(*) as count')

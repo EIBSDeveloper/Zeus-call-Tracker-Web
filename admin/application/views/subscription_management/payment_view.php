@@ -256,7 +256,15 @@
 																				<div class="badge badge-warning text-black fw-semibold fs-7"><?php echo renewal_days_count($sublist->subscriber_id)?> Days</div>
 																			</td>
 																			<td>
-																				<span class="fw-semibold fs-7 badge badge-warning text-black">New Purchased</span>
+																				<?php if($sublist->status == "4") {?>
+																					<div class="badge badge-danger text-white fw-bold fs-7 rounded">Expired</div>
+																				<?php } else if($sublist->status == "3") {?>
+																					<div class="badge badge-danger text-black fw-bold fs-7 rounded" style="background-color: #FF7F00 !important;">Renewal</div>
+																				<?php } else if($sublist->status == "1") {?>
+																					<div class="badge badge-warning text-black fw-bold fs-7 rounded">Callers Added</div>
+																				<?php } else if($sublist->status == "0") {?>
+																					<div class="badge badge-warning text-black fw-bold fs-7 rounded">New Purchased</div>
+																				<?php } ?>
 																			</td>
 																		</tr>
 																	<?php }?>

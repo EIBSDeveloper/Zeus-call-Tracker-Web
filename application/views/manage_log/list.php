@@ -262,7 +262,7 @@
 													<div class="text-center">
 														<label class="badge badge-info text-white fs-2 fw-bold"><?php echo sprintf("%02d", $outgoingcall_count); ?></label>
 														<label class="text-black fs-2 fw-bold me-1 ms-1">/</label>
-														<label class="badge badge-info text-white fs-2 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Outgoing Call Ratio">99%</label>
+														<label class="badge badge-info text-white fs-2 fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Average Outgoing Call Ratio"><?php echo number_format($outgoing_call_ratio); ?> %</label>
 													</div>
 												</div>
 												<div class="col-lg-3 mb-2">

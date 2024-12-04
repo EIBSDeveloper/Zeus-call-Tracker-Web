@@ -26,20 +26,26 @@ class Manage_callers extends CI_Controller {
     public function index() {
 		$user_id=$this->session->userdata['user_id'];
 
+		$user_detail=$this->db->select('a.*')
+		->from('user a')
+		->where('a.status!=', '2')
+		->where('a.user_id', $user_id)
+		->get()
+		->row();
+
 		$data['user_data']=$this->db->select('b.* ,p.package_name,p.package_amount,p.duration,p.period,a.name,w.amount,a.company_id')
 			->from('subscriber b')
 			->join('user a', 'a.user_id = b.user_id', 'left')
 			->join('package p', 'p.package_id = b.package_id', 'left')
 			->join('subscriber_details w', 'w.subscriber_id = b.subscriber_id', 'left')
 			->where('a.status!=', '2')
-			->where_not_in('b.status',[2,3])
+			->where('b.status!=', '2')
 			->where('b.user_id', $user_id)
 			->get()
 			->row();
 
 		$data['caller_data']=$this->db->select('b.*')
 		->from('user b')
-		->where('b.company_id',$data['user_data']->company_id )
 		->where('b.is_manager', 1)
 		->get()
 		->result();
@@ -143,8 +149,11 @@ class Manage_callers extends CI_Controller {
 			->join('package p', 'p.package_id = u.package_id', 'left')
 			->join('department d', 'd.department_id = u.department_id', 'left')
 			// ->where('a.status', '0') // Filter by subscriber status
-			->where('u.status !=', '2') // Exclude users with status 2
-			->where('u.created_by', $user_id);
+			->where('u.status !=', '2')
+			->where('u.is_bh', '0') // Exclude users with status 2
+			// ->where('u.package_id', $user_detail->package_id) // Exclude users with status 2
+			->where('u.created_by', $user_id)
+			->group_by('u.user_id');
 
 			if (!empty($fill_data['caller_name_fill'])) {
 				$this->db->like('u.name', $fill_data['caller_name_fill']);
@@ -186,8 +195,11 @@ class Manage_callers extends CI_Controller {
 		->join('package p', 'p.package_id = u.package_id', 'left')
 		->join('department d', 'd.department_id = u.department_id', 'left')
 		// ->where('a.status', '0') // Filter by subscriber status
-		->where('u.status !=', '2') // Exclude users with status 2
-		->where('u.created_by', $user_id); // Exclude members with status 2
+		->where('u.status !=', '2') 
+		->where('u.is_bh', '0') 
+		// ->where('u.package_id', $user_detail->package_id)// Exclude users with status 2
+		->where('u.created_by', $user_id)
+		->group_by('u.user_id'); // Exclude members with status 2
 
 		// Apply filtering for search fields
 		if(!empty($fill_data['caller_name_fill'])) {
@@ -583,6 +595,77 @@ class Manage_callers extends CI_Controller {
 
 	}
 
+	public function update_caller(){
+		$user_id=$this->session->userdata['user_id'];
+		
+		$is_manager = $this->input->post("is_manager") ?? 0;
+		$subscription_id = $this->input->post("subscription_id");
+		$package_id = $this->input->post("package_id");
+		$first_name = $this->input->post("first_name");
+		$last_name = $this->input->post("last_name");
+		$mobile_no = $this->input->post("mobile_no");
+		$dept_id = $this->input->post("dept_id");
+		$descrip_caller = $this->input->post("descrip_caller");
+		$edit_user_id = $this->input->post("user_id");
+
+		
+
+		if (!empty($_FILES['edit_logo']['name'])) {
+			$extension = pathinfo($_FILES['edit_logo']['name'], PATHINFO_EXTENSION);
+
+			$config['upload_path'] = 'assets/Images/user';
+			$config['allowed_types'] = 'jpg|jpeg|png';
+			$config['max_size'] = 50000;
+			$config['file_name'] = $edit_user_id;
+			//print_r($config['file_name']);
+			// Load the upload library
+			$this->load->library('upload', $config);
+
+			// Delete old logo if exists
+			$old_logo = str_replace("/", '', $edit_user_id) . '.' . $extension;
+			if (file_exists("assets/Images/user/" . $old_logo)) {
+				unlink("assets/Images/user/" . $old_logo);
+			}
+
+			// Upload new logo
+			if ($this->upload->do_upload('edit_logo')) {
+				$uploadData = $this->upload->data();
+				$data['logo'] = str_replace("/", '', $edit_user_id) . '.' . $extension;
+			} else {
+				$this->session->set_flashdata('g_err', $this->upload->display_errors());
+				redirect('Manage_callers');
+			}
+		} else {
+			$data['logo'] = $this->input->post("old_logo");
+		}
+			
+
+			$data['updated_by'] = $user_id;
+			$data['updated_at'] = date('Y-m-d H:i:s');
+			
+
+			// Insert into 'user' table
+			$insert_user = [
+				'name' =>$first_name,
+				'nick_name' => $last_name,
+				'is_manager' => $is_manager ?? 0,
+				'department_id' => $dept_id,
+				'image' => $data['logo'],
+				'description' => $descrip_caller,
+				'modified_by' =>$data['updated_by'],
+				'modified_on' =>$data['updated_at'],
+			];
+
+			$this->db->where('user_id', $edit_user_id);
+			$update_success = $this->db->update('user', $insert_user);
+		if($update_success){
+			$this->session->set_flashdata('g_success', 'Update Caller successfully...');
+		}else {
+			$this->session->set_flashdata('g_err', 'Could not update Caller!');
+		}
+		redirect('Manage_callers');
+	}
+
 
 	public function subscription_list(){
 
@@ -604,7 +687,19 @@ class Manage_callers extends CI_Controller {
 			->get()
 			->result();
 
+			$subscriber_data = $this->db->select('b.*')
+				->from('user a')
+				->join('subscriber b', 'a.user_id = b.user_id', 'left')
+				->where('b.status', '0')
+				->where('a.user_id', $user_id)
+				->get()
+				->result(); 
 
+			// Count the number of rows returned
+			$data['subscriber_data_count'] = count($subscriber_data);
+
+			// print_r($data['subscriber_data']);
+			// exit;
 			// Get search filters from POST request
 			$fill_data['user_name_fill'] = $this->input->post('user_name_fill') ? $this->input->post('user_name_fill') : '';
 			$fill_data['comp_name_fill'] = $this->input->post('comp_name_fill') ? $this->input->post('comp_name_fill') : '';

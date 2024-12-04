@@ -110,7 +110,7 @@ function incoming_call_count($user_id){
     	->result_array(); // Fetch all phone numbers as an array
     $package_details=$ci->db->select('b.start_date,b.end_date')
     ->from('subscriber b')
-    ->where_not_in('b.status', [2,3])
+    ->where('b.status !=',2)
     ->where('b.user_id', $sub_id)
     ->group_by('b.subscriber_id')
     ->get()
@@ -148,7 +148,7 @@ function outcoming_call_count($user_id){
 
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+        ->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -193,7 +193,7 @@ function missed_call_count($user_id){
 
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+		->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -234,7 +234,7 @@ function rejected_call_count($user_id){
     	->result_array(); // Fetch all phone numbers as an array
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+		->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -273,7 +273,7 @@ function incoming_call_month($user_id,$call_start_date,$call_end_date){
     	->result_array(); // Fetch all phone numbers as an array
     $package_details=$ci->db->select('b.start_date,b.end_date')
     ->from('subscriber b')
-    ->where_not_in('b.status', [2,3])
+    ->where('b.status !=',2)
     ->where('b.user_id', $sub_id)
     ->group_by('b.subscriber_id')
     ->get()
@@ -309,7 +309,7 @@ function outcoming_call_month($user_id,$call_start_date,$call_end_date){
 
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+        ->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -350,7 +350,7 @@ function missed_call_month($user_id,$call_start_date,$call_end_date){
 
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+        ->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -390,7 +390,7 @@ function rejected_call_month($user_id,$call_start_date,$call_end_date){
     	->result_array(); // Fetch all phone numbers as an array
         $package_details=$ci->db->select('b.start_date,b.end_date')
         ->from('subscriber b')
-        ->where_not_in('b.status', [2,3])
+        ->where('b.status !=',2)
         ->where('b.user_id', $sub_id)
         ->group_by('b.subscriber_id')
         ->get()
@@ -586,7 +586,39 @@ function rejected_call_weekly($user_id, $call_start_date, $call_end_date) {
     return $weekly_counts;
 }
 
-
+function common_select_values($colums, $table_name, $conditions, $row_result)
+{
+	$ci = &get_instance();
+	$ci->load->database();
+	$conditions_val = '';
+	$result = '';
+	$query = '';
+	if ($colums != '' && $table_name != '') {
+		// To get conditions
+		if ($conditions != '') {
+			$conditions_val = 'WHERE ' . $conditions;
+		} else {
+			$conditions_val = '';
+		}
+		//echo "SELECT $colums FROM $table_name $conditions_val"; die;
+		$query = $ci->db->query("SELECT $colums FROM $table_name $conditions_val");
+		// To get results based on the condtions
+		if ($row_result != '' && $row_result == 'row') {
+			$result = $query->row();
+		} else if ($row_result != '' && $row_result == 'result') {
+			$result = $query->result();
+		} else if ($row_result != '' && $row_result == 'row_array') {
+			$result = $query->row_array();
+		} else if ($row_result != '' && $row_result == 'result_array') {
+			$result = $query->result_array();
+		} else {
+			$result = $query->result();
+		}
+		return $result;
+	} else {
+		return false;
+	}
+}
 
 
 

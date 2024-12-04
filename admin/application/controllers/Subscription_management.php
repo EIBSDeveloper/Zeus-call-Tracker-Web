@@ -79,7 +79,7 @@ class Subscription_management extends CI_Controller {
 			}
 			
 			
-		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,cmp.status as comp_status,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 			->from('subscriber b')
 			->join('user a', 'a.user_id = b.user_id', 'left')
 			->join('package p', 'p.package_id = b.package_id', 'left')
@@ -121,7 +121,7 @@ class Subscription_management extends CI_Controller {
 			$data['subscriber_data'] = $result;
 
 				// Start building the query
-		$count_data =$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount,w.no_of_callers')
+		$count_data =$this->db->select('b.* ,cmp.company_name as user_company,cmp.status as comp_status,p.package_name,p.package_amount,p.duration,p.period,a.name,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
 		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
@@ -164,7 +164,7 @@ class Subscription_management extends CI_Controller {
 	}
 
 	public function view_subscriber($id) {
-		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,cmp.status as comp_status,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
 		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
@@ -181,7 +181,7 @@ class Subscription_management extends CI_Controller {
     }
 
 	public function view_payment($id) {
-		$this->db->select('b.* ,cmp.company_name as user_company,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
+		$this->db->select('b.* ,cmp.company_name as user_company,cmp.status as comp_status,p.package_name,p.package_amount,p.duration,p.period,a.name,a.image,w.amount,w.no_of_callers')
 		->from('subscriber b')
 		->join('user a', 'a.user_id = b.user_id', 'left')
 		->join('company cmp', 'cmp.company_id = a.company_id', 'left')
@@ -210,17 +210,15 @@ class Subscription_management extends CI_Controller {
 
 	public function block_subscriber() {
 
-		$user_id=$this->input->post("user_id");
+		$company_id=$this->input->post("company_id");
 
 		$data=[
 			'status'=>1,
 		];
-		$this->db->where('user_id', $user_id);
-		$result_user = $this->db->update('user', $data);
+		$this->db->where('company_id', $company_id);
+		$result_user = $this->db->update('company', $data);
 
-		$this->db->where('user_id', $user_id);
-		$result = $this->db->update('subscriber', $data);
-		if ($result) {
+		if ($result_user) {
 			$this->session->set_flashdata('g_success', 'Subscriber have been Blocked successfully...');
 		} else {
 			$this->session->set_flashdata('g_err', 'Could not Block The Subscriber!');
@@ -230,18 +228,15 @@ class Subscription_management extends CI_Controller {
 
 	public function unblock_subscriber() {
 
-		$user_id=$this->input->post("user_id");
+		$company_id=$this->input->post("company_id");
 
 		$data=[
 			'status'=>0,
 		];
 
-		$this->db->where('user_id', $user_id);
-		$result_user = $this->db->update('user', $data);
-
-		$this->db->where('user_id', $user_id);
-		$result = $this->db->update('subscriber', $data);
-		if ($result) {
+		$this->db->where('company_id', $company_id);
+		$result_user = $this->db->update('company', $data);
+		if ($result_user) {
 			$this->session->set_flashdata('g_success', 'Subscriber have been Unblocked successfully...');
 		} else {
 			$this->session->set_flashdata('g_err', 'Could not Unblock The Subscriber!');

@@ -25,6 +25,13 @@ class Dashboard extends CI_Controller {
     *****************************************************************************************/
 
     public function index() {
+		$user_id=$this->session->userdata['user_id'];
+		$user_detail=$this->db->select('a.*')
+		->from('user a')
+		->where('a.status!=', '2')
+		->where('a.user_id', $user_id)
+		->get()
+		->row();
 
         $call_start_date = date('Y-m-01');  // Start date (first day of the month)
 		$call_end_date = date('Y-m-t');  
@@ -34,7 +41,7 @@ class Dashboard extends CI_Controller {
 		$currentMonth = date('m'); // Current month
         $currentYear = date('Y'); // Current year
 	
-		$user_id=$this->session->userdata['user_id'];
+		
 		$subquery = $this->db->select('phone_no')
     	->from('company_cug_detail')
     	->get()
@@ -49,7 +56,9 @@ class Dashboard extends CI_Controller {
             ->where('a.call_date', $today_date)  // Filter by user ID
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 1) // Status is 1
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 		
@@ -65,7 +74,9 @@ class Dashboard extends CI_Controller {
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 0) // Status is 0
 			->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 
@@ -82,7 +93,9 @@ class Dashboard extends CI_Controller {
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 2) // Status is 2 for missed calls
 			->where('a.missed_status', 0) // Missed status is 0
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 	//reject call
@@ -94,7 +107,9 @@ class Dashboard extends CI_Controller {
             ->where('a.call_date', $today_date) // Filter by user ID
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 3) // Status is 3 for rejected calls
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 
@@ -139,6 +154,8 @@ class Dashboard extends CI_Controller {
         ->from('user a')
         ->where('a.created_by', $user_id) 
 		->where('a.status!=', '2')
+		->where('a.is_bh', '0')
+		->where('a.package_id', $user_detail->package_id)
         ->get()
         ->row();
 
@@ -147,6 +164,8 @@ class Dashboard extends CI_Controller {
         ->join('department d', 'u.department_id = d.department_id', 'left')
         ->where('u.created_by', $user_id) 
 		->where('u.status!=', '2')
+		->where('u.is_bh', '0')
+		->where('u.package_id', $user_detail->package_id)
 		->group_by('u.department_id')  // Exclude phone numbers
         ->get()
         ->result();
@@ -169,6 +188,8 @@ class Dashboard extends CI_Controller {
 			->where('u.status !=', '2') // Exclude users with status 2
 			->where('u.created_by', $user_id)
 			->group_by('u.user_id')
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id)
 			->get()
 			->result();
 
@@ -185,6 +206,8 @@ class Dashboard extends CI_Controller {
 			)
 			->where('u.status !=', '2') // Exclude users with status 2
 			->where('u.created_by', $user_id)
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id)
 			->group_by('u.user_id')
 			->get()
 			->result_array();
@@ -215,6 +238,8 @@ class Dashboard extends CI_Controller {
 			)
 			->where('u.status !=', '2') // Exclude users with status 2
 			->where('u.created_by', $user_id)
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id)
 			->group_by('u.user_id')
 			->get()
 			->result_array();

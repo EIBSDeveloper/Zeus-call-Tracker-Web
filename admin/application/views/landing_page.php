@@ -274,8 +274,9 @@
 							</div>
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">No.of Callers</label>
+								<input type="hidden" name="package_amount_hidden" id="package_amount_hidden">
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" name="no_of_callers" id="no_of_caller"  value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" name="no_of_callers" id="no_of_caller"  value="1" oninput="this.value = this.value.replace(/[^0-9]/g, ''); cal_per_caller_amt(this.value);">
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
@@ -342,10 +343,16 @@
 					var duration =response.duration=="1" ?response.period+" Month": (response.duration=="2" ? response.period+" Year" :"Life Time")
 					$('#package_name_label').text(response.package_name);
 					$('#package_amount_label').text(response.package_amount);
+					$('#package_amount_hidden').val(response.package_amount);
 					$('#package_hidden_id').val(response.package_id);
 					$('#duration_label').text(duration );
 					var gst_per =   $('#gst_per').val(); 
-					gst_calculation(response.package_amount, gst_per)
+					var no_of_caller= $('#no_of_caller').val();
+
+					var amount=response.package_amount;
+					var total_caller_amount =amount*no_of_caller ;
+
+					gst_calculation(total_caller_amount, gst_per)
 					
 				} else {
 					console.error('Invalid response received');
@@ -357,6 +364,18 @@
 		});
 	}
 </script>
+	<script>
+		function cal_per_caller_amt(no_of_caller) {
+
+			var add_caller =no_of_caller ? no_of_caller : 0;
+			var per_caller_amount=$('#package_amount_hidden').val();
+			const gst_per = parseFloat($('#gst_per').val());
+			const amount = per_caller_amount*add_caller; 
+
+			// Pass the per-caller amount to GST calculation
+			gst_calculation(amount, gst_per);
+		}
+	</script>
 
 <script>
     function gst_calculation(amount, gst_per) {
@@ -385,69 +404,109 @@
 </script>
 
 <script>
-			function purchase_validation () {
-				$("#btnSubmit_pay").prop('disabled', true);
-				let err = 0;
-				var company_name = $('#company_name').val();
-				var sub_first_name = $('#sub_first_name').val();
-				var sub_last_name = $('#sub_last_name').val();
-				var email_id = $('#email_id').val();
-				var mobile_no = $('#mobile_no').val();
-				var no_of_caller = $('#no_of_caller').val();
-				// var duration = $('#sub_last_name').val();
-				
-				// console.log(offer_chk)
-				// Clear previous errors
-				$('#company_name').siblings('.invalid-feedback').text('').show();
-				$('#sub_first_name').siblings('.invalid-feedback').text('').show();
-				$('#sub_last_name').siblings('.invalid-feedback').text('').show();
-				$('#email_id').siblings('.invalid-feedback').text('').show();
-				$('#no_of_caller').siblings('.invalid-feedback').text('').show();
-				$('#mobile_no').siblings('.invalid-feedback').text('').show();
+			function purchase_validation() {
+    $("#btnSubmit_pay").prop('disabled', true);  // Disable the submit button initially
+    let hasError = false;
+    
+    var company_name = $('#company_name').val();
+    var sub_first_name = $('#sub_first_name').val();
+    var sub_last_name = $('#sub_last_name').val();
+    var email_id = $('#email_id').val();
+    var mobile_no = $('#mobile_no').val();
+    var no_of_caller = $('#no_of_caller').val();
+    
+    // Clear previous errors
+    $('#company_name').siblings('.invalid-feedback').text('').hide();
+    $('#sub_first_name').siblings('.invalid-feedback').text('').hide();
+    $('#sub_last_name').siblings('.invalid-feedback').text('').hide();
+    $('#email_id').siblings('.invalid-feedback').text('').hide();
+    $('#no_of_caller').siblings('.invalid-feedback').text('').hide();
+    $('#mobile_no').siblings('.invalid-feedback').text('').hide();
 
-				// Initialize error flag
-				let hasError = false;
+	console.log(company_name)
+    // Validate fields
+    if (company_name === '') {
+        $('#company_name').siblings('.invalid-feedback').text('Company Name is Required.').show();
+        hasError = true;
+    }
 
-				if (company_name === '') {
-					$('#company_name').siblings('.invalid-feedback').text('Company Name is Required.').show();
-					hasError = true;
-				}
+    if (sub_first_name === '') {
+        $('#sub_first_name').siblings('.invalid-feedback').text('First Name is Required.').show();
+        hasError = true;
+    }
 
-				if (sub_first_name === '') {
-					$('#sub_first_name').siblings('.invalid-feedback').text('First Name is Required.').show();
-					hasError = true;
-				}
-				
-				if (sub_last_name === '') {
-					$('#sub_last_name').siblings('.invalid-feedback').text('Last Name is Required.').show();
-					hasError = true;
-				}
+    if (sub_last_name === '') {
+        $('#sub_last_name').siblings('.invalid-feedback').text('Last Name is Required.').show();
+        hasError = true;
+    }
 
-				if (email_id === '') {
-					$('#email_id').siblings('.invalid-feedback').text('Email ID is Required.').show();
-					hasError = true;
-				}
-				if (mobile_no === '') {
-					$('#mobile_no').siblings('.invalid-feedback').text('Mobile No is Required.').show();
-					hasError = true;
-				}
-				if (no_of_caller === '') {
-					$('#no_of_caller').siblings('.invalid-feedback').text('No.of Callers is Required.').show();
-					hasError = true;
-				}
+    if (email_id === '') {
+        $('#email_id').siblings('.invalid-feedback').text('Email ID is Required.').show();
+        hasError = true;
+    }
 
-				
-				// If there are errors, return false immediately
-				if (hasError) {
-					$("#btnSubmit_pay").prop('disabled', false);
-					return false;
-				}
-				else{
-					$("#btnSubmit_pay").prop('disabled', true);
-					// return false;
-					$('#purchase_form').submit();
-				}
-			}
+    if (mobile_no === '') {
+        $('#mobile_no').siblings('.invalid-feedback').text('Mobile No is Required.').show();
+        hasError = true;
+    }
+
+    if (no_of_caller === '' || no_of_caller === '0') {
+        $('#no_of_caller').siblings('.invalid-feedback').text('Number of Callers is Required.').show();
+        hasError = true;
+    }
+
+    // If any error occurred in validation, return false to stop further processing
+    if (hasError) {
+        $("#btnSubmit_pay").prop('disabled', false); // Re-enable the submit button
+        return false;
+    }
+
+    // Function to check uniqueness of mobile number and company name
+    function checkUniqueField(fieldType, value, url, errorMessage, callback) {
+        // Show loading indicator
+        // $('#' + fieldType).siblings('.invalid-feedback').text('Checking ' + fieldType + '...').show();
+
+        $.ajax({
+            type: "POST",
+            url: baseurl + url,
+            data: { [fieldType]: value },
+            cache: false,
+            dataType: "html",
+            success: function(result) {
+                if (result > 0) {
+                    $('#' + fieldType).siblings('.invalid-feedback').text(errorMessage).show();
+                    $("#btnSubmit_pay").prop('disabled', false);
+                } else {
+                    // Proceed if the field value is unique
+                    callback();
+                }
+            },
+            error: function() {
+                $('#' + fieldType).siblings('.invalid-feedback').text('An error occurred. Please try again.').show();
+                $("#btnSubmit_pay").prop('disabled', false);
+            }
+        });
+    }
+
+    // Check mobile number uniqueness
+    if (mobile_no) {
+        checkUniqueField('mobile_no', mobile_no, 'Landing_page/chk_mobile_unique', 'Mobile Number already exists.', function() {
+            // Check company name uniqueness after mobile number is confirmed
+            checkUniqueField('company_name', company_name, 'Landing_page/chk_company_unique', 'Company Name already exists.', function() {
+                // If both checks are passed, submit the form
+                $('#purchase_form').submit();
+            });
+        });
+    } else if (company_name) {
+        // If mobile number is empty, just check the company name uniqueness
+        checkUniqueField('company_name', company_name, 'Landing_page/chk_company_unique', 'Company Name already exists.', function() {
+            // If the check is passed, submit the form
+            $('#purchase_form').submit();
+        });
+    }
+}
+
+
 </script>
 
 	</body>

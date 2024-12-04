@@ -57,13 +57,13 @@
                         </a>
                         <!--end:Menu item-->
                         <!--begin:Menu item-->
-                        <a href="<?php echo base_url(); ?>Landing_page" class="menu-item me-0 me-lg-2">
-                            <!--begin:Menu link-->
+                        <!-- <a href="< ?php echo base_url(); ?>Landing_page" class="menu-item me-0 me-lg-2">
+                         
                             <span class="menu-link py-3">
                                 <span class="menu-title">Landing Page</span>
                             </span>
-                            <!--end:Menu link-->
-                        </a>
+                          
+                        </a> -->
                         <!--end:Menu item-->
                         <!--begin:Menu item-->
                         <a href="<?php echo base_url(); ?>Package_management" class="menu-item me-0 me-lg-2" id="menu_hd_mng_pckg">
@@ -145,7 +145,7 @@
                         <!--end::Heading-->
                         <!--begin::Tab content-->
                         <div class="scroll-y mh-325px px-2 py-1">
-                            <a href="javascript:;" class="d-flex flex-stack px-2 py-2 bg-gray-300 bg-opacity-75 mb-1 text-hover-primary" style="border-radius: 10px;">
+                            <!-- <a href="javascript:;" class="d-flex flex-stack px-2 py-2 bg-gray-300 bg-opacity-75 mb-1 text-hover-primary" style="border-radius: 10px;">
                                 <div class="d-flex align-items-center">
                                     <div class="symbol symbol-35px me-4">
                                         <div class="image-input image-input-circle" data-kt-image-input="true" style="background-image: url(<?php echo base_url();?>assets/Images/member_1.png)">
@@ -200,7 +200,16 @@
                                     </div>
                                 </div>
                                 <span class="badge badge-info fs-8">2 Hr</span>
-                            </a>
+                            </a> -->
+							<div class="scroll-y mh-325px my-5 px-8">
+								<div class="d-flex flex-stack py-2">
+									<div class="d-flex align-items-center">
+										<div class="mb-0 me-2">
+											<label><b>No Notifications Found</b></label>
+										</div>
+									</div>
+								</div>
+							</div>
                         </div>
                         <!--end::Tab content-->
                     </div>

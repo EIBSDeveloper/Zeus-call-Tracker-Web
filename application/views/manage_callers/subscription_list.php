@@ -221,10 +221,13 @@
 														<!-- <a href="javascript:;" class="btn btn-primary btn-sm">
 															<span class="me-2"><i class="fa-solid fa-file-export fs-7"></i></span>Export
 														</a> -->
-
+														<!-- < ?php echo $subscriber_data_count;?> -->
+														<?php if ($subscriber_data_count==0) { ?>								
 														<a href="<?php echo base_url(); ?>Landing_page" class="btn btn-primary btn-sm">
 															<span class="me-2"><i class="fa-solid fa-plus fs-7 fw-bold"></i></span>Purchase Packages
 														</a>
+														
+														<?php }?>	
 													</div>
 													<?php $common_date= get_general_settings()->date_format ?? 'd-M-Y'; ?>
 													<div class="row">
@@ -312,9 +315,11 @@
 																				<td>
 																					<span class="text-end">
 																					<?php if($sublist->status==3){?>
+																						<?php if ($subscriber_data_count == 0) { ?>	
 																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_renewal_subscriber" onclick=" renew_caller_modal_func(<?php echo $sublist->subscriber_id;?>)">
 																							<i class="fa-solid fa-repeat fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Package"></i>
 																						</a>
+																					<?php }?>
 																					<?php }else{?>
 																						<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_buy_more_callers" onclick=" buy_caller_modal_func(<?php echo $sublist->subscriber_id;?>)">
 																							<i class="fa-solid fa-cart-plus fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Buy More Callers"></i>
@@ -1612,10 +1617,9 @@
 							var no_of_caller=response.no_of_callers;
 
 							var amount=response.package_amount;
-							var per_caller_amount = amount/no_of_caller;
-							var total_caller_amount =per_caller_amount*add_caller ;
-							$('#total_caller_hidden').val(no_of_caller);
-							$('#per_caller_rate').val(per_caller_amount);
+							var total_caller_amount =amount*add_caller ;
+							// $('#total_caller_hidden').val(no_of_caller);
+							$('#per_caller_rate').val(amount);
 							gst_calculation(total_caller_amount, gst_per)
 							
 						} else {
@@ -1692,7 +1696,7 @@
 			function cal_per_caller_amt(no_of_caller) {
 
 				var add_caller =no_of_caller ? no_of_caller : 0;
-				var no_of_caller=$('#total_caller_hidden').val();
+				// var no_of_caller=$('#total_caller_hidden').val();
 				var per_caller_amount=$('#per_caller_rate').val();
 				const gst_per = parseFloat($('#gst_per_buy').val());
 				const amount = per_caller_amount*add_caller; 
@@ -1813,7 +1817,7 @@
 				}
 		</script>
 <!-- pagination -->
-<script>
+	<script>
 			var DatatablesExtensionButtons = {
 			init: function() {
 				var t;

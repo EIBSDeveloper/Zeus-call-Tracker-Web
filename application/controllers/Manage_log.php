@@ -28,6 +28,13 @@ class Manage_log extends CI_Controller {
 		$call_end_date = date('Y-m-t');  
 		$user_id=$this->session->userdata['user_id'];
 
+		$user_detail=$this->db->select('a.*')
+		->from('user a')
+		->where('a.status!=', '2')
+		->where('a.user_id', $user_id)
+		->get()
+		->row();
+
 		$subquery = $this->db->select('phone_no')
     	->from('company_cug_detail')
     	->get()
@@ -43,7 +50,9 @@ class Manage_log extends CI_Controller {
 			->where('a.call_date <=', $call_end_date) // End date filter
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 1) // Status is 1
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 		
@@ -60,7 +69,9 @@ class Manage_log extends CI_Controller {
 		->where('a.redirected_to', 0) // Redirected to 0
 		->where('a.status', 0) // Status is 0
 		->where('a.duration !=', '00:00:00') // Duration is not '00:00:00'
-		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) 
+		->where('u.is_bh', '0')
+		->where('u.package_id', $user_detail->package_id)// Exclude phone numbers in company_cug_detail
 		->get()
 		->row();
 
@@ -78,7 +89,9 @@ class Manage_log extends CI_Controller {
 		->where('a.redirected_to', 0) // Redirected to 0
 		->where('a.status', 2) // Status is 2 for missed calls
 		->where('a.missed_status', 0) // Missed status is 0
-		->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+		->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+		->where('u.is_bh', '0')
+		->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 		->get()
 		->row();
 
@@ -91,7 +104,9 @@ class Manage_log extends CI_Controller {
 			->where('a.call_date <=', $call_end_date) // End date filter
 			->where('a.redirected_to', 0) // Redirected to 0
 			->where('a.status', 3) // Status is 3 for rejected calls
-			->where_not_in('b.phone_no', array_column($subquery, 'phone_no')) // Exclude phone numbers in company_cug_detail
+			->where_not_in('b.phone_no', array_column($subquery, 'phone_no'))
+			->where('u.is_bh', '0')
+			->where('u.package_id', $user_detail->package_id) // Exclude phone numbers in company_cug_detail
 			->get()
 			->row();
 
@@ -187,7 +202,9 @@ class Manage_log extends CI_Controller {
 			   ->where('u.created_by', $user_id) // Filter by the user who created the call
 			   ->where('cl.call_date >=', $call_start_date) // Start date filter
 			   ->where('cl.call_date <=', $call_end_date) // End date filter
-			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no')) // Avoid phone numbers in subquery
+			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no'))
+			   ->where('u.is_bh', '0')
+				->where('u.package_id', $user_detail->package_id) // Avoid phone numbers in subquery
 			   ->order_by('cl.call_log_id', 'desc');
 		   
 		   // Apply search filters
@@ -234,7 +251,9 @@ class Manage_log extends CI_Controller {
 			   ->where('u.created_by', $user_id) // Filter by the user who created the call
 			   ->where('cl.call_date >=', $call_start_date) // Start date filter
 			   ->where('cl.call_date <=', $call_end_date) // End date filter
-			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no')); // Avoid phone numbers in subquery
+			   ->where_not_in('cb.phone_no', array_column($subquery, 'phone_no'))
+			   ->where('u.is_bh', '0')
+				->where('u.package_id', $user_detail->package_id); // Avoid phone numbers in subquery
 		   
 		   // Apply the same filters to count the total rows
 		   if (!empty($fill_data['communicator_fill'])) {
