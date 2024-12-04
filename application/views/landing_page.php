@@ -240,42 +240,44 @@
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">Company</label>
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Company Name" id="company_name" name="company_name" value="">
+									<input type="hidden" name="user_id_hidden" id="user_id_hidden" value="<?php echo $subscriber_details->user_id?>">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Company Name" id="company_name" name="company_name" value="<?php echo $subscriber_details->company_name?>" readonly>
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">First Name</label>
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter First Name" name="sub_first_name" id="sub_first_name" value="">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter First Name" name="sub_first_name" id="sub_first_name" value="<?php echo $subscriber_details->name?>">
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="col-lg-4">
-								<label class="col-form-label required fw-semibold fs-6">Last Name</label>
+								<label class="col-form-label fw-semibold fs-6">Last Name</label>
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Last Name" name="sub_last_name" id="sub_last_name" value="">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Last Name" name="sub_last_name" id="sub_last_name" value="<?php echo $subscriber_details->nick_name?>">
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">Email ID</label>
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Email ID" name="email_id" id="email_id" value="" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9@._-]/g, '')">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Email ID" name="email_id" id="email_id" value="<?php echo $subscriber_details->email_id?>" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9@._-]/g, '')">
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">Mobile No</label>
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Mobile No" value="" name="mobile_no" id="mobile_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter Mobile No" value="<?php echo $subscriber_details->phone_no?>" name="mobile_no" id="mobile_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 10)" readonly>
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
 							<div class="col-lg-4">
 								<label class="col-form-label required fw-semibold fs-6">No.of Callers</label>
+								<input type="hidden" name="package_amount_hidden" id="package_amount_hidden">
 								<div class="fv-row">
-									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" name="no_of_callers" id="no_of_caller"  value="" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+									<input type="text" class="form-control form-control-lg_1 form-control-solid" placeholder="Enter No.of Callers" name="no_of_callers" id="no_of_caller"  value="1" oninput="this.value = this.value.replace(/[^0-9]/g, ''); cal_per_caller_amt(this.value);">
 									<div class="fv-plugins-message-container invalid-feedback"></div>
 								</div>
 							</div>
@@ -342,10 +344,20 @@
 					var duration =response.duration=="1" ?response.period+" Month": (response.duration=="2" ? response.period+" Year" :"Life Time")
 					$('#package_name_label').text(response.package_name);
 					$('#package_amount_label').text(response.package_amount);
+					$('#package_amount_hidden').val(response.package_amount);
 					$('#package_hidden_id').val(response.package_id);
 					$('#duration_label').text(duration );
 					var gst_per =   $('#gst_per').val(); 
-					gst_calculation(response.package_amount, gst_per)
+
+
+					var no_of_caller= $('#no_of_caller').val();
+
+					var amount=response.package_amount;
+					var total_caller_amount =amount*no_of_caller ;
+
+					gst_calculation(total_caller_amount, gst_per)
+
+					
 					
 				} else {
 					console.error('Invalid response received');
@@ -355,8 +367,24 @@
 				console.error('AJAX error:', status, error);
 			}
 		});
+
 	}
+
+
 </script>
+
+<script>
+		function cal_per_caller_amt(no_of_caller) {
+
+			var add_caller =no_of_caller ? no_of_caller : 0;
+			var per_caller_amount=$('#package_amount_hidden').val();
+			const gst_per = parseFloat($('#gst_per').val());
+			const amount = per_caller_amount*add_caller; 
+
+			// Pass the per-caller amount to GST calculation
+			gst_calculation(amount, gst_per);
+		}
+	</script>
 
 <script>
     function gst_calculation(amount, gst_per) {
@@ -418,11 +446,6 @@
 					hasError = true;
 				}
 				
-				
-				if (sub_last_name === '') {
-					$('#sub_last_name').siblings('.invalid-feedback').text('Last Name is Required.').show();
-					hasError = true;
-				}
 
 				if (email_id === '') {
 					$('#email_id').siblings('.invalid-feedback').text('Email ID is Required.').show();
@@ -432,7 +455,7 @@
 					$('#mobile_no').siblings('.invalid-feedback').text('Mobile No is Required.').show();
 					hasError = true;
 				}
-				if (no_of_caller === '') {
+				if (no_of_caller === '' || no_of_caller === '0') {
 					$('#no_of_caller').siblings('.invalid-feedback').text('No.of Callers is Required.').show();
 					hasError = true;
 				}

@@ -273,7 +273,7 @@
 							}else if (res.response == 1) {
 								$('div#err').text('');
 								$('div#success').text('Login Successfully...');
-								window.location = baseurl + '/Dashboard';
+								window.location = baseurl + 'Dashboard';
 							}
 						} 
 					});

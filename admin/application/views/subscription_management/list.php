@@ -327,7 +327,7 @@
 																			</div>
 																		</td>
 																		<td class="text-start">
-																			<label class="fs-7 text-black"><?php echo $sublist->company_name ?></label>
+																			<label class="fs-7 text-black"><?php echo $sublist->user_company ?></label>
 																			<div class="d-block">
 																				<div class="badge badge-secondary fw-bold text-black fs-8"><?php echo $sublist->mobile_no ?></div>
 																			</div>
@@ -356,21 +356,21 @@
 																			<div class="badge badge-warning text-black fs-7"><?php echo renewal_days_count($sublist->subscriber_id)?> Days</div>
 																		</td>
 																		<td>
-																			<?php if($sublist->status==0) { ?>
+																			<?php if($sublist->comp_status==0 && $sublist->status !=3) { ?>
 																				<button class="badge badge-success text-white fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">Active Subscriber</button>
 																				<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
 																					<div class="py-3">
 																						<div class="menu-item px-3">
-																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_block_subscriber" onclick="block_func(<?php echo $sublist->user_id;?>,'<?php echo $sublist->name;?>')">Block Subscriber</a>
+																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_block_subscriber" onclick="block_func(<?php echo $sublist->company_id;?>,'<?php echo $sublist->name;?>')">Block Subscriber</a>
 																						</div>
 																					</div>
 																				</div>
-																			<?php } else if($sublist->status == 1) { ?>
+																			<?php } else if($sublist->comp_status == 1 && $sublist->status !=3) { ?>
 																				<button class="badge badge-warning text-black fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true" style="background-color: #FF7F00 !important;">Blocked Subscriber</button>
 																				<div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
 																					<div class="py-3">
 																						<div class="menu-item px-3">
-																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber" onclick="unblock_func(<?php echo $sublist->user_id;?>,'<?php echo $sublist->name;?>')">Unblock Subscriber</a>
+																							<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber" onclick="unblock_func(<?php echo $sublist->company_id;?>,'<?php echo $sublist->name;?>')">Unblock Subscriber</a>
 																						</div>
 																					</div>
 																				</div>
@@ -396,242 +396,114 @@
 																	</tr>
 																<?php }?>
 															<?php }?>
-															<!-- <tr>
-																<td>
-																	<div class="d-flex align-items-center">
-																		<a class="d-block overlay text-center me-3" href="<?php echo base_url(); ?>assets/Images/member_1.png" data-fslightbox="lightbox-basic_list">
-																		    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_1.png')">
-																		    </div>
-																		    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																		        <i class="bi bi-eye-fill text-white fs-2"></i>
-																		    </div>
-																	 	</a>
-																	 	<div class="mb-0 me-2">
-																			<label class="fs-7 fw-semibold text-black">Gokul E</label>
-																			<label class="cursor-pointer fs-7 fw-semibold text-black ms-1"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="gogul@gmail.com">
-																				<i class="fa-solid fa-envelope fs-5 text-black"></i>
-																			</label>
-																			<div class="d-block fs-8 fw-semibold text-gray-600"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Created Date">20-Sep-2024</div>
-																		</div>
-																 	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Rajexim Private Limited</label>
-																	<div class="d-block">
-																		<div class="badge badge-secondary fw-bold text-black fs-8">8956231245</div>
-																	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Silver Package</label>
-																	<label class="fs-7 text-black ms-1 me-1">/</label>
-																	<label class="fs-7 text-black">1 Month</label>
-																	<div class="d-block">
-																		<label class="badge badge-warning fs-8 text-black me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Caller Count">12</label>
-																		<label class="badge badge-info">
-																			<span class="fs-8 text-black">
-																				<i class="fa-solid fa-indian-rupee-sign fs-8 text-white me-1"></i>
-																			</span>
-																			<span class="fs-8 text-white">3,000</span>
-																		</label>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-success fs-7">20-Sep-2024</div>
-																	<div class="d-block mt-1">
-																		<div class="badge badge-danger fs-7">19-Oct-2024</div>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-warning text-black fs-7">23 Days</div>
-																</td>
-																<td>
-																	<button class="badge badge-warning text-black fw-bold fs-7 rounded border-0" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true" style="background-color: #FF7F00 !important;">Blocked Subscriber</button>
-															        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-semibold w-200px mt-1" data-kt-menu="true">
-															        	<div class="py-3">
-																        	<div class="menu-item px-3">
-																        		<a href="javascript:;" class="menu-link px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_unblock_subscriber">Unblock Subscriber</a>
-																        	</div>
-																        </div>
-															        </div>
-																</td>
-																<td>
-																	<span class="text-end">
-																		<a href="<?php echo base_url(); ?>Subscription_management/view_subscriber_2" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																			<i class="fa-solid fa-eye fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View"></i>
-																		</a>
-																	</span>
-																</td>
-															</tr>
-															<tr>
-																<td>
-																	<div class="d-flex align-items-center">
-																		<a class="d-block overlay text-center me-3" href="<?php echo base_url(); ?>assets/Images/member_1.png" data-fslightbox="lightbox-basic_list">
-																		    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded w-45px h-45px" style="background-image:url('<?php echo base_url(); ?>assets/Images/member_1.png')">
-																		    </div>
-																		    <div class="overlay-layer card-rounded bg-dark bg-opacity-25 shadow w-45px h-45px">
-																		        <i class="bi bi-eye-fill text-white fs-2"></i>
-																		    </div>
-																	 	</a>
-																	 	<div class="mb-0 me-2">
-																			<label class="fs-7 fw-semibold text-black">Amaran D</label>
-																			<label class="cursor-pointer fs-7 fw-semibold text-black ms-1"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="amaran@gmail.com">
-																				<i class="fa-solid fa-envelope fs-5 text-black"></i>
-																			</label>
-																			<div class="d-block fs-8 fw-semibold text-gray-600"  data-bs-toggle="tooltip" data-bs-placement="bottom" title="Created Date">20-Apr-2023</div>
-																		</div>
-																 	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Black Forest Cakes</label>
-																	<div class="d-block">
-																		<div class="badge badge-secondary fw-bold text-black fs-8">9090858685</div>
-																	</div>
-																</td>
-																<td class="text-start">
-																	<label class="fs-7 text-black">Gold Package</label>
-																	<label class="fs-7 text-black ms-1 me-1">/</label>
-																	<label class="fs-7 text-black">6 Months</label>
-																	<div class="d-block">
-																		<label class="badge badge-warning fs-8 text-black me-1"   data-bs-toggle="tooltip" data-bs-placement="bottom" title="Caller Count">15</label>
-																		<label class="badge badge-info">
-																			<span class="fs-8 text-black">
-																				<i class="fa-solid fa-indian-rupee-sign fs-8 text-white me-1"></i>
-																			</span>
-																			<span class="fs-8 text-white">22,500</span>
-																		</label>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-success fs-7">15-Mar-2024</div>
-																	<div class="d-block mt-1">
-																		<div class="badge badge-danger fs-7">14-Sep-2024</div>
-																	</div>
-																</td>
-																<td align="start">
-																	<div class="badge badge-warning text-black fs-7">0 Days</div>
-																</td>
-																<td>
-																	<div class="badge badge-danger text-white fw-bold fs-7 rounded">Expired</div>
-																</td>
-																<td>
-																	<span class="text-end">
-																		<a href="javascript:;" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_renewal_subscriber">
-																			<i class="fa-solid fa-repeat fs-2 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Subscriber"></i>
-																		</a>
-																		<a href="<?php echo base_url(); ?>Subscription_management/view_subscriber_3" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-																			<i class="fa-solid fa-eye fs-3 text-black" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View"></i>
-																		</a>
-																	</span>
-																</td>
-															</tr> -->
+															
 														</tbody>
 													</table>
-													<div class="row">
+														<div class="row">
 															<div class="col-lg-3">Showing <?php echo $page; ?> to <?php echo (($page + $perpage_count) > count($subscriber_data)) ? count($subscriber_data) : $page + $perpage_count; ?> of <?php echo count($subscriber_data); ?> entries</div>
-															<div class="col-lg-9 d-flex justify-content-end">
-																<?php
-																$coun = ceil($count ?? 10 / 10);
-																$c_page = isset($_GET['page']) ? $_GET['page'] : 1;
-																?>
-																<?php
-																function get_paging_info1($tot_rows, $pp, $curr_page)
-																{
-																	$pages = ceil($tot_rows / $pp); // calc pages
+																<div class="col-lg-9 d-flex justify-content-end">
+																	<?php
+																	$coun = ceil($count ?? 10 / 10);
+																	$c_page = isset($_GET['page']) ? $_GET['page'] : 1;
+																	?>
+																	<?php
+																	function get_paging_info1($tot_rows, $pp, $curr_page)
+																	{
+																		$pages = ceil($tot_rows / $pp); // calc pages
 
-																	$data = array(); // start out array
-																	$data['si']        = ($curr_page * $pp) - $pp; // what row to start at
-																	$data['pages']     = $pages;                   // add the pages
-																	$data['curr_page'] = $curr_page;               // Whats the current page
-																	$paging_info['curr_url'] = base_url();
-																	return $data; //return the paging data
+																		$data = array(); // start out array
+																		$data['si']        = ($curr_page * $pp) - $pp; // what row to start at
+																		$data['pages']     = $pages;                   // add the pages
+																		$data['curr_page'] = $curr_page;               // Whats the current page
+																		$paging_info['curr_url'] = base_url();
+																		return $data; //return the paging data
 
-																} ?>
-																<?php $paging_info = get_paging_info1($count ?? 10, 10, $c_page); ?>
+																	} ?>
+																	<?php $paging_info = get_paging_info1($count ?? 10, 10, $c_page); ?>
 
-																<form method="POST" id="filter_form" action="" enctype="multipart/form-data">
-																	<!-- SET FILTER pAGINATION -->
-																	<input type="hidden" id="comp_name_fill" name="comp_name_fill" value="<?php echo $comp_name_fill ?? ''; ?>">
-																	<input type="hidden" id="subscriber_status_fill" name="subscriber_status_fill" value="<?php echo $subscriber_status_fill ?? ''; ?>">
-																	<input type="hidden" id="dt_fill_select_value" name="dt_fill_select_value" value="<?php echo $dt_fill ?? ''; ?>">
-																	<input type="hidden" id="from_date_fillter_textbox" name="from_date_fillter_textbox" value="<?php echo $from_date_fillter ?? ''; ?>">
-																	<input type="hidden" id="to_date_fillter_textbox" name="to_date_fillter_textbox" value="<?php echo $to_date_fillter ?? ''; ?>">
-																	<input type="hidden" id="user_name_fill" name="user_name_fill" value="<?php echo $user_name_fill ?? ''; ?>">
-																	<input type="hidden" id="package_id_fill" name="package_id_fill" value="<?php echo $package_id_fill ?? ''; ?>">
-																	<input type="hidden" id="user_mobile_fill" name="user_mobile_fill" value="<?php echo $user_mobile_fill ?? ''; ?>">
-																	<input type="hidden" class="sorting_filter_class" name="sorting_filter" id="sorting_filter" value="<?php echo $perpage ? $perpage : 10; ?>" />
+																	<form method="POST" id="filter_form" action="" enctype="multipart/form-data">
+																		<!-- SET FILTER pAGINATION -->
+																		<input type="hidden" id="comp_name_fill" name="comp_name_fill" value="<?php echo $comp_name_fill ?? ''; ?>">
+																		<input type="hidden" id="subscriber_status_fill" name="subscriber_status_fill" value="<?php echo $subscriber_status_fill ?? ''; ?>">
+																		<input type="hidden" id="dt_fill_select_value" name="dt_fill_select_value" value="<?php echo $dt_fill ?? ''; ?>">
+																		<input type="hidden" id="from_date_fillter_textbox" name="from_date_fillter_textbox" value="<?php echo $from_date_fillter ?? ''; ?>">
+																		<input type="hidden" id="to_date_fillter_textbox" name="to_date_fillter_textbox" value="<?php echo $to_date_fillter ?? ''; ?>">
+																		<input type="hidden" id="user_name_fill" name="user_name_fill" value="<?php echo $user_name_fill ?? ''; ?>">
+																		<input type="hidden" id="package_id_fill" name="package_id_fill" value="<?php echo $package_id_fill ?? ''; ?>">
+																		<input type="hidden" id="user_mobile_fill" name="user_mobile_fill" value="<?php echo $user_mobile_fill ?? ''; ?>">
+																		<input type="hidden" class="sorting_filter_class" name="sorting_filter" id="sorting_filter" value="<?php echo $perpage ? $perpage : 10; ?>" />
 
-																	<ul class="pagination" style="float:right;">
-																		<!-- If the current page is more than 1, show the First and Previous links -->
-																		<?php if ($paging_info['curr_page'] > 1) : ?>
+																		<ul class="pagination" style="float:right;">
+																			<!-- If the current page is more than 1, show the First and Previous links -->
+																			<?php if ($paging_info['curr_page'] > 1) : ?>
 
-																			<li class='paginate_button page-item move_to' value="<?php echo ($paging_info['curr_page'] - 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' title='Page <?php echo ($paging_info['curr_page'] - 1); ?>'>
-																					<< </a>
-																			</li>
-
-																		<?php endif; ?>
-
-
-
-																		<?php
-																		//setup starting point
-
-																		//$max is equal to number of links shown
-																		$max = 3;
-																		if ($paging_info['curr_page'] < $max)
-																			$sp = 1;
-																		elseif ($paging_info['curr_page'] >= ($paging_info['pages'] - floor($max / 2)))
-																			$sp = $paging_info['pages'] - $max + 1;
-																		elseif ($paging_info['curr_page'] >= $max)
-																			$sp = $paging_info['curr_page']  - floor($max / 2);
-																		?>
-
-																		<!-- If the current page >= $max then show link to 1st page -->
-																		<?php if ($paging_info['curr_page'] >= $max) : ?>
-
-																			<li class='paginate_button page-item move_to' value="1"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' onclick="form_submit()" title='Page 1'>1</a></li>
-																			<!--<li class='paginate_button page-item '><input type="submit" name="first_page" value="Update" />  </li>-->
-																			..
-																		<?php endif; ?>
-																		<!-- Loop though max number of pages shown and show links either side equal to $max / 2 -->
-																		<?php for ($i = $sp; $i <= ($sp + $max - 1); $i++) : ?>
-
-																			<?php
-																			if ($i > $paging_info['pages'])
-																				continue;
-																			?>
-
-																			<?php if ($paging_info['curr_page'] == $i) : ?>
-
-																				<li class='paginate_button page-item active move_to' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer text-hover-dark' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
-
-																			<?php else : ?>
-
-																				<li class='paginate_button page-item move_to ' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
+																				<li class='paginate_button page-item move_to' value="<?php echo ($paging_info['curr_page'] - 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' title='Page <?php echo ($paging_info['curr_page'] - 1); ?>'>
+																						<< </a>
+																				</li>
 
 																			<?php endif; ?>
 
-																		<?php endfor; ?>
-																		<!-- If the current page is less than say the last page minus $max pages divided by 2-->
-																		<!-- < ?php if ($paging_info['curr_page'] < ($paging_info['pages'] - floor($max / 2))) : ?>
-
-																			..
-																			<li class='paginate_button page-item  move_to' value="< ?php echo $paging_info['pages']; ?>"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer' title='Page < ?php echo $paging_info['pages']; ?>'>< ?php echo $paging_info['pages']; ?></a></li>
-
-																		< ?php endif; ?> -->
-
-																		<!-- Show last two pages if we're not near them -->
-																		<?php if ($paging_info['curr_page'] < $paging_info['pages']) : ?>
-
-																			<li class='paginate_button page-item move_to ' value="<?php echo ($paging_info['curr_page'] + 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer ' title='Page <?php echo ($paging_info['curr_page'] + 1); ?>'> >> </a></li>
 
 
+																			<?php
+																			//setup starting point
 
-																		<?php endif; ?>
-																	</ul>
-																</form>
+																			//$max is equal to number of links shown
+																			$max = 3;
+																			if ($paging_info['curr_page'] < $max)
+																				$sp = 1;
+																			elseif ($paging_info['curr_page'] >= ($paging_info['pages'] - floor($max / 2)))
+																				$sp = $paging_info['pages'] - $max + 1;
+																			elseif ($paging_info['curr_page'] >= $max)
+																				$sp = $paging_info['curr_page']  - floor($max / 2);
+																			?>
 
+																			<!-- If the current page >= $max then show link to 1st page -->
+																			<?php if ($paging_info['curr_page'] >= $max) : ?>
+
+																				<li class='paginate_button page-item move_to' value="1"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' class='page-link cursor-pointer' onclick="form_submit()" title='Page 1'>1</a></li>
+																				<!--<li class='paginate_button page-item '><input type="submit" name="first_page" value="Update" />  </li>-->
+																				..
+																			<?php endif; ?>
+																			<!-- Loop though max number of pages shown and show links either side equal to $max / 2 -->
+																			<?php for ($i = $sp; $i <= ($sp + $max - 1); $i++) : ?>
+
+																				<?php
+																				if ($i > $paging_info['pages'])
+																					continue;
+																				?>
+
+																				<?php if ($paging_info['curr_page'] == $i) : ?>
+
+																					<li class='paginate_button page-item active move_to' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer text-hover-dark' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
+
+																				<?php else : ?>
+
+																					<li class='paginate_button page-item move_to ' value="<?php echo $i; ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="form_submit()" class='page-link cursor-pointer' title='Page <?php echo $i; ?>'><?php echo $i; ?></a></li>
+
+																				<?php endif; ?>
+
+																			<?php endfor; ?>
+																			<!-- If the current page is less than say the last page minus $max pages divided by 2-->
+																			<!-- < ?php if ($paging_info['curr_page'] < ($paging_info['pages'] - floor($max / 2))) : ?>
+
+																				..
+																				<li class='paginate_button page-item  move_to' value="< ?php echo $paging_info['pages']; ?>"><a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer' title='Page < ?php echo $paging_info['pages']; ?>'>< ?php echo $paging_info['pages']; ?></a></li>
+
+																			< ?php endif; ?> -->
+
+																			<!-- Show last two pages if we're not near them -->
+																			<?php if ($paging_info['curr_page'] < $paging_info['pages']) : ?>
+
+																				<li class='paginate_button page-item move_to ' value="<?php echo ($paging_info['curr_page'] + 1); ?>"> <a aria-controls='kt_roles_view_table' data-dt-idx='1' tabindex='0' onclick="submit()" class='page-link cursor-pointer ' title='Page <?php echo ($paging_info['curr_page'] + 1); ?>'> >> </a></li>
+
+
+
+																			<?php endif; ?>
+																		</ul>
+																	</form>
+																</div>
 															</div>
-														</div>
 
 												</div>
 											</div>
@@ -696,7 +568,7 @@
 				<div class="swal2-html-container" id="swal2-html-container" style="display: block;">Are you sure you want to Unblock Subscriber ?
 					<div class="d-block fw-bold fs-5 py-2">
 					<label id="unblock_name"></label>
-					<input type="hidden" name="user_id" id="unblock_id">
+					<input type="hidden" name="company_id" id="unblock_id">
 					</div>
 				</div>
 				<div class="d-flex justify-content-center align-items-center pt-8">
@@ -724,7 +596,7 @@
 				<div class="swal2-html-container" id="swal2-html-container" style="display: block;">Are you sure you want to Block Subscriber ?
 					<div class="d-block fw-bold fs-5 py-2">
 					<label id="block_name"></label>
-					<input type="hidden" name="user_id" id="block_id">
+					<input type="hidden" name="company_id" id="block_id">
 					</div>
 				</div>
 				<div class="d-flex justify-content-center align-items-center pt-8">
@@ -779,6 +651,17 @@
 					?>
 				});
 			<?php } ?>
+		</script>
+		<script>
+			$(document).ready(function() {
+				$(".move_to").on("click", function() {
+					value = $(this).val();
+					// alert(value);
+					$('#filter_form').attr('action', "<?php echo base_url(); ?>Subscription_management/?page=" + value);
+					$("#filter_form").submit();
+					e.preventDefault();
+				});
+			});
 		</script>
 		<!-- Flash Data Script::End -->
 		<!-- <script>
@@ -1004,7 +887,7 @@
 		<!-- export -->
 
 		<script>
-		var DatatablesExtensionButtons = {
+			var DatatablesExtensionButtons = {
 			init: function() {
 				var t;
 				t = $(".list_page").DataTable({

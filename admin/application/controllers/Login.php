@@ -58,7 +58,6 @@ class Login extends CI_Controller {
 	{
 		$user_mobile = $this->input->post('mobile');
 		
-
 		// Query to check user credentials
 		$this->db->where('phone_no', $user_mobile);
 		$this->db->where('status !=',2);     
@@ -142,37 +141,6 @@ class Login extends CI_Controller {
 		}
 	}
 
-	// public function verify_otp_check()
-	// {
-	// 	// print_r($this->session->userdata('user_id'));
-	// 	// 	exit;
-	// 	// Get OTP and email from input
-	// 	$otp   = $this->input->post('code_1') . $this->input->post('code_2') . $this->input->post('code_3') . $this->input->post('code_4') . $this->input->post('code_5') . $this->input->post('code_6');
-	// 	$mobile_no = $this->input->post('mobile');
-		
-
-	// 	// Fetch OTP from database
-	// 	$query  = $this->db->select('*')->from('user_login_credential')->where('phone_no', $mobile_no)->limit(1)->get();
-	// 	$result = $query->row();
-		
-	// 	if($result){
-	// 		$this->session->set_userdata([
-	// 			'user_id' => $result->user_login_credential_id,
-	// 		]);
-
-	// 		print_r($this->session->userdata('user_id'));
-	// 		exit;
-	// 	}
-	// 	print_r($this->session->userdata('user_id'));
-	// 		exit;
-
-	// 	if ($result && $result->otp === $otp) {
-	// 		// OTP is valid
-	// 		return redirect('/Dashboard');
-	// 	} else {
-			
-	// 	}
-	// }
 
 
 

@@ -63,7 +63,8 @@ class Landing_page extends CI_Controller {
 	}
 
 	public function purchase_package() {
-
+		// print_r("fd");
+		// exit;
 	
 		// Get input data
 		$data = [
@@ -111,142 +112,160 @@ class Landing_page extends CI_Controller {
 								  ->result();
 	
 		if (!empty($existing_user)) {
-
-			$data_success = [
-				'phone_no' => $this->input->post("mobile_no"),
-				'transaction_id' => 'T1234-5678-9012-8050',
-				'package_name' => $package_details->package_name,
-				'period' => $period,
-				'duration' => $duration,
-				'no_of_callers' => $this->input->post("no_of_callers"),
-				'paid_amount' => $this->input->post("total_amount"),
-			];
-			$purchase_success=true;
-
-			if($purchase_success){
-				$this->load->view( 'payment_success_page' ,$data_success);
-			}else{
-				$this->load->view('payment_failure_page');
-			}
-			
 			return;
-		}
-	
-		// Get the next auto-increment values for 'user' and 'subscriber' tables
-		$auto_increment_value = common_select_values('AUTO_INCREMENT', 'INFORMATION_SCHEMA.TABLES', 'TABLE_SCHEMA = database() AND TABLE_NAME = "user"', 'row');
-		$next_user_id = $auto_increment_value->AUTO_INCREMENT;
-	
-		$auto_increment_value_sub = common_select_values('AUTO_INCREMENT', 'INFORMATION_SCHEMA.TABLES', 'TABLE_SCHEMA = database() AND TABLE_NAME = "subscriber"', 'row');
-		$next_subsc_id = $auto_increment_value_sub->AUTO_INCREMENT;
-	
-		// Function to generate formatted codes
-		function request_num($input, $pad_len = 3, $prefix = null) {
-			if (is_string($prefix)) {
-				return sprintf("%s%s", $prefix, str_pad($input, $pad_len, "0", STR_PAD_LEFT));
-			}
-			return str_pad($input, $pad_len, "0", STR_PAD_LEFT);
-		}
-	
-		// Generate 'user_code'
-		$last_usrid_detail = $this->db->query("SELECT * FROM `user` ORDER BY user_id DESC LIMIT 1")->row();
-		$year = substr(date("y"), -2);
-	
-		if ($last_usrid_detail) {
-			$last_data = $last_usrid_detail->user_code;
-			$result = preg_replace('/[^0-9]/', '', explode("/", $last_data)[0]);
-			$data['user_code'] = request_num(((int)$result + 1), 3, "USR-") . '/' . $year;
-		} else {
-			$data['user_code'] = 'USR-001/' . $year;
-		}
-	
-		// Insert into 'user' table
-		$insert_data = [
-			'user_code' => $data['user_code'],
-			'name' => $data['sub_first_name'] . " " . $data['sub_last_name'],
-			'phone_no' => $data['phone_no'],
-			'created_by' => 1,
-			'status' => 0,
-		];
-	
-		if ($this->db->insert('user', $insert_data)) {
-			// Generate 'subscriber_no'
-			$last_scrid_detail = $this->db->query("SELECT * FROM `subscriber` ORDER BY subscriber_id DESC LIMIT 1")->row();
-	
-			if ($last_scrid_detail) {
-				$last_data_sc = $last_scrid_detail->subscriber_no;
-				$result = preg_replace('/[^0-9]/', '', explode("/", $last_data_sc)[0]);
-				$data['subscriber_no'] = request_num(((int)$result + 1), 3, "SCR-") . '/' . $year;
-			} else {
-				$data['subscriber_no'] = 'SCR-001/' . $year;
-			}
-	
-			$data['created_by'] = 1;
-			$data['created_at'] = date('Y-m-d H:i:s');
-			$data['updated_by'] = 1;
-			$data['updated_at'] = date('Y-m-d H:i:s');
-	
-			// Insert into 'subscriber' table
-			$insert_subscriber = [
-				'subscriber_no' => $data['subscriber_no'],
-				'user_id' => $next_user_id,
-				'subscriber_first_name' => $data['sub_first_name'],
-				'subscriber_last_name' => $data['sub_last_name'],
+		}else{
+			// Get the next auto-increment values for 'user' and 'subscriber' tables
+			$auto_increment_value = common_select_values('AUTO_INCREMENT', 'INFORMATION_SCHEMA.TABLES', 'TABLE_SCHEMA = database() AND TABLE_NAME = "user"', 'row');
+			$next_user_id = $auto_increment_value->AUTO_INCREMENT;
+		
+			$auto_increment_value_sub = common_select_values('AUTO_INCREMENT', 'INFORMATION_SCHEMA.TABLES', 'TABLE_SCHEMA = database() AND TABLE_NAME = "subscriber"', 'row');
+			$next_subsc_id = $auto_increment_value_sub->AUTO_INCREMENT;
+
+			$auto_increment_value_sub = common_select_values('AUTO_INCREMENT', 'INFORMATION_SCHEMA.TABLES', 'TABLE_SCHEMA = database() AND TABLE_NAME = "company"', 'row');
+			$next_company_id = $auto_increment_value_sub->AUTO_INCREMENT;
+
+			$insert_company = [
 				'company_name' => $data['company_name'],
-				'mobile_no' => $data['phone_no'],
-				'email_id' => $data['email_id'],
-				'package_id' => $data['package_hidden_id'],
-				'start_date' => $start_date_formatted,
-				'end_date' => $end_date_formatted,
-				'created_by' => $data['created_by'],
-				'created_at' => $data['created_at'],
-				'updated_by' => $data['updated_by'],
-				'updated_at' => $data['updated_at'],
+				'company_code' => $data['company_name'],
+				'phone_no' => $data['phone_no'],
+				'created_by' => 1,
+				'created_on' => date('Y-m-d H:i:s'),
 				'status' => 0,
 			];
-	
-			if ($this->db->insert('subscriber', $insert_subscriber)) {
-				// Generate 'subscriber_detail_no'
-				$last_scrhsid_detail = $this->db->query("SELECT * FROM `subscriber_details` ORDER BY subscriber_details_id DESC LIMIT 1")->row();
-	
-				if ($last_scrhsid_detail) {
-					$last_data_sc = $last_scrhsid_detail->subscriber_detail_no;
-					$result = preg_replace('/[^0-9]/', '', explode("/", $last_data_sc)[0]);
-					$data['subscriber_detail_no'] = request_num(((int)$result + 1), 3, "SDH-") . '/' . $year;
-				} else {
-					$data['subscriber_detail_no'] = 'SDH-001/' . $year;
+			$this->db->insert('company', $insert_company);
+			// Function to generate formatted codes
+			function request_num($input, $pad_len = 3, $prefix = null) {
+				if (is_string($prefix)) {
+					return sprintf("%s%s", $prefix, str_pad($input, $pad_len, "0", STR_PAD_LEFT));
 				}
-	
-				// Insert into 'subscriber_details' table
-				$insert_subscriber_hist = [
-					'subscriber_detail_no' => $data['subscriber_detail_no'],
-					'subscriber_id' => $next_subsc_id,
-					'package_id' => $data['package_hidden_id'],
+				return str_pad($input, $pad_len, "0", STR_PAD_LEFT);
+			}
+		
+			// Generate 'user_code'
+			$last_usrid_detail = $this->db->query("SELECT * FROM `user` ORDER BY user_id DESC LIMIT 1")->row();
+			$year = substr(date("y"), -2);
+		
+			if ($last_usrid_detail) {
+				$last_data = $last_usrid_detail->user_code;
+				$result = preg_replace('/[^0-9]/', '', explode("/", $last_data)[0]);
+				$data['user_code'] = request_num(((int)$result + 1), 3, "USR-") . '/' . $year;
+			} else {
+				$data['user_code'] = 'USR-001/' . $year;
+			}
+		
+			// Insert into 'user' table
+			$insert_data = [
+				'user_code' => $data['user_code'],
+				'name' => $data['sub_first_name'],
+				'phone_no' => $data['phone_no'],
+				'company_id' => $next_company_id,
+				'package_id' =>$data['package_hidden_id'],
+				'created_by' => 1,
+				'status' => 0,
+				'nick_name' => $data['sub_last_name'],
+				'email_id' => $data['email_id'],
+			];
+		
+			if ($this->db->insert('user', $insert_data)) {
+				// Generate 'subscriber_no'
+				$last_scrid_detail = $this->db->query("SELECT * FROM `subscriber` ORDER BY subscriber_id DESC LIMIT 1")->row();
+		
+				if ($last_scrid_detail) {
+					$last_data_sc = $last_scrid_detail->subscriber_no;
+					$result = preg_replace('/[^0-9]/', '', explode("/", $last_data_sc)[0]);
+					$data['subscriber_no'] = request_num(((int)$result + 1), 3, "SCR-") . '/' . $year;
+				} else {
+					$data['subscriber_no'] = 'SCR-001/' . $year;
+				}
+		
+				$data['created_by'] = 1;
+				$data['created_at'] = date('Y-m-d H:i:s');
+				$data['updated_by'] = 1;
+				$data['updated_at'] = date('Y-m-d H:i:s');
+		
+				// Insert into 'subscriber' table
+				$insert_subscriber = [
+					'subscriber_no' => $data['subscriber_no'],
+					'user_id' => $next_user_id,
+					'subscriber_first_name' => $data['sub_first_name'],
+					'subscriber_last_name' => $data['sub_last_name'],
+					'company_id' => $next_company_id,
+					'mobile_no' => $data['phone_no'],
+					'email_id' => $data['email_id'],
 					'no_of_callers' => $data['no_of_callers'],
-					'amount' => $data['sub_total'],
-					'gst_amount' => $data['gst_amount'],
-					'paid_amount' => $data['total_amount'],
+					'available_callers' => 0,
+					'sub_package_amount' => $data['sub_total'],
+					'sub_paid_amount' => $data['total_amount'],
+					'package_id' => $data['package_hidden_id'],
 					'start_date' => $start_date_formatted,
 					'end_date' => $end_date_formatted,
-					'period' => $period,
-					'duration' => $duration,
 					'created_by' => $data['created_by'],
 					'created_at' => $data['created_at'],
 					'updated_by' => $data['updated_by'],
 					'updated_at' => $data['updated_at'],
 					'status' => 0,
 				];
-	
-				if ($this->db->insert('subscriber_details', $insert_subscriber_hist)) {
-					$this->load->view('payment_success_page');
-					return;
+		
+				if ($this->db->insert('subscriber', $insert_subscriber)) {
+					// Generate 'subscriber_detail_no'
+					$last_scrhsid_detail = $this->db->query("SELECT * FROM `subscriber_details` ORDER BY subscriber_details_id DESC LIMIT 1")->row();
+		
+					if ($last_scrhsid_detail) {
+						$last_data_sc = $last_scrhsid_detail->subscriber_detail_no;
+						$result = preg_replace('/[^0-9]/', '', explode("/", $last_data_sc)[0]);
+						$data['subscriber_detail_no'] = request_num(((int)$result + 1), 3, "SDH-") . '/' . $year;
+					} else {
+						$data['subscriber_detail_no'] = 'SDH-001/' . $year;
+					}
+		
+					// Insert into 'subscriber_details' table
+					$insert_subscriber_hist = [
+						'subscriber_detail_no' => $data['subscriber_detail_no'],
+						'subscriber_id' => $next_subsc_id,
+						'package_id' => $data['package_hidden_id'],
+						'no_of_callers' => $data['no_of_callers'],
+						'amount' => $data['sub_total'],
+						'gst_amount' => $data['gst_amount'],
+						'paid_amount' => $data['total_amount'],
+						'start_date' => $start_date_formatted,
+						'end_date' => $end_date_formatted,
+						'period' => $period,
+						'duration' => $duration,
+						'created_by' => $data['created_by'],
+						'created_at' => $data['created_at'],
+						'updated_by' => $data['updated_by'],
+						'updated_at' => $data['updated_at'],
+						'status' => 0,
+					];
+		
+					if ($this->db->insert('subscriber_details', $insert_subscriber_hist)) {
+						$data_success = [
+							'phone_no' => $this->input->post("mobile_no"),
+							'transaction_id' => 'T1234-5678-9012-8050',
+							'package_name' => $package_details->package_name,
+							'period' => $period,
+							'duration' => $duration,
+							'no_of_callers' => $this->input->post("no_of_callers"),
+							'paid_amount' => $this->input->post("total_amount"),
+						];
+						$purchase_success=true;
+			
+						if($purchase_success){
+							$this->load->view( 'payment_success_page' ,$data_success);
+							return;
+						}else{
+							$this->load->view('payment_failure_page');
+							return;
+						}
+					}
 				}
-			}
+			}	
+
 		}
 	
-		$this->load->view('payment_failure_page');
+		
 	}
-	
-	
+
 
     public function payment_failure() {
         $this->load->view( 'payment_failure_page' );
@@ -254,5 +273,39 @@ class Landing_page extends CI_Controller {
     public function payment_success() {
         $this->load->view( 'payment_success_page' );
     }
+
+	public function chk_mobile_unique()
+	{
+		$mobile_no = $_POST['mobile_no'];
+		$result = $this->db->query("SELECT * from user
+		 where status !='2' and phone_no='" . $mobile_no . "'")->row();
+
+		if (isset($result)) {
+			echo "1";
+		} else {
+			echo "0";
+		}
+	}
+
+		public function chk_company_unique()
+		{
+			// Sanitize input to prevent SQL injection
+			$company_name = $this->input->post('company_name', TRUE); // TRUE filters out potentially harmful data
+
+			// Use query bindings to prevent SQL injection
+			$this->db->where('status !=', '2');
+			$this->db->where('company_name', $company_name);
+			$query = $this->db->get('company');  // Get the query result from the 'company' table
+
+			// Check if any row is returned
+			if ($query->num_rows() > 0) {
+				// Company name exists
+				echo "1";
+			} else {
+				// Company name is unique
+				echo "0";
+			}
+		}
+
 }
 ?>

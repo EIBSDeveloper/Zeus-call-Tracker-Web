@@ -99,7 +99,7 @@
                         <!--end::Heading-->
                         <!--begin::Tab content-->
                         <div class="scroll-y mh-325px px-2 py-1">
-                            <a href="javascript:;" class="d-flex flex-stack px-2 py-2 bg-gray-300 bg-opacity-75 mb-1 text-hover-primary" style="border-radius: 10px;">
+                            <!-- <a href="javascript:;" class="d-flex flex-stack px-2 py-2 bg-gray-300 bg-opacity-75 mb-1 text-hover-primary" style="border-radius: 10px;">
                                 <div class="d-flex align-items-center">
                                     <div class="symbol symbol-35px me-4">
                                         <div class="image-input image-input-circle" data-kt-image-input="true" style="background-image: url(<?php echo base_url();?>assets/Images/notif_package.png)">
@@ -154,7 +154,16 @@
                                     </div>
                                 </div>
                                 <span class="badge badge-info fs-8">2 Hr</span>
-                            </a>
+                            </a> -->
+							<div class="scroll-y mh-325px my-5 px-8">
+								<div class="d-flex flex-stack py-2">
+									<div class="d-flex align-items-center">
+										<div class="mb-0 me-2">
+											<label><b>No Notifications Found</b></label>
+										</div>
+									</div>
+								</div>
+							</div>
                         </div>
                         <!--end::Tab content-->
                     </div>
@@ -259,6 +268,7 @@
                 <!--end::Close-->
             </div>
             <!--end::Modal header-->
+            <form name="profile_update" id="profile_update" method="POST" action="<?php echo base_url(); ?>User/Update" enctype="multipart/form-data" onsubmit="return Edit_validate();">
             <div class="modal-body pt-0 pb-15 px-5 px-xl-10">
                 <!--begin::Heading-->
                 <div class="text-center">
@@ -266,31 +276,36 @@
                 </div>
                 <div class="row mb-4">
                     <div class="col-lg-12 text-center mt-2">
-                            <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('<?php echo base_url(); ?>assets/Images/admin_1.png')">
-                                <div class="image-input-wrapper w-125px h-125px" style="background-image: url('<?php echo base_url(); ?>assets/Images/admin_1.png')"></div>
-                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
-                                    <i class="fa-solid fa-pencil fs-7 text-black"></i>
-                                    <input type="file" name="logo" id="logo" accept=".png, .jpg, .jpeg">
-                                    <input type="hidden" name="avatar_remove">
-                                </label>
-                            </div>
+                           <div class="image-input image-input-outline" data-kt-image-input="true" style="background-image: url('<?php echo base_url(); ?>assets/Images/student_1.png')">
+								<?php if (file_exists($photo_path) && $user_data_header->image ?? '') { ?>
+									<div class="image-input-wrapper w-125px h-125px" style="background-image: url('<?php echo $photo_url;?>')"></div>
+									<?php } else if (file_exists($letter_path)) { ?>
+									<div class="image-input-wrapper w-125px h-125px" style="background-image: url('<?php echo $letter_path; ?>')"></div>
+									<?php }?>
+								<label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" data-kt-image-input-action="change" data-bs-toggle="tooltip" data-kt-initialized="1">
+									<i class="bi bi-pencil-fill fs-7"></i>
+									<input type="file" name="logo_super" id="logo_super" accept=".png, .jpg, .jpeg">
+									<input type="hidden" name="member_profile" id="member_profile" value="<?php echo $user_data_header->image ?>">
+									<input type="hidden" name="avatar_remove">
+								</label>
+							</div>
                             <div class="form-text pt-1">Allowed file types: png, jpg, jpeg.</div>
                         </div>
                     <div class="col-lg-12 mb-1">
                         <label class="col-form-label required fw-semibold fs-6">Name</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter User Name" value="Abdul Nizamuddin M"/>
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter User Name" name="user_name" id="user_name" value="<?php echo $user_data_header ? $user_data_header->name : ''; ?>"/>
                     </div>
                     <div class="col-lg-12 mb-1">
-                        <label class="col-form-label fw-semibold fs-6">Company Name</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Company Name" value="Spacedot Private Limited" disabled/>
+                        <label class="col-form-label fw-semibold fs-6">Company Name</label> 
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter Company Name" name="company_id" id="company_id" value="<?php echo $user_data_header ? $user_data_header->company_name : ''; ?>" disabled/>
                     </div>
                     <div class="col-lg-12 mb-1">
                         <label class="col-form-label fw-semibold fs-6">Mobile No</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Mobile Number" value="9685747485" disabled />
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter Mobile Number" value="<?php echo $user_data_header ? $user_data_header->phone_no : ''; ?>"disabled />
                     </div>
                     <div class="col-lg-12 mb-1">
                         <label class="col-form-label fw-semibold fs-6">Email ID</label>
-                        <input type="text" class="form-control form-control-solid" placeholder="Enter Email ID" value="abdulnizamuddinm@gmail.com" />
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter Email ID"  name="email_id" id="email_id" value="<?php echo $user_data_header ? $user_data_header->email_id : ''; ?>" />
                     </div>
                     <!-- <div class="col-lg-12">
                         <label class="col-form-label required fw-semibold fs-6">Username</label>
@@ -327,14 +342,42 @@
                             </span>
                         </div>
                     </div> -->
+                    <input type="hidden" name="edit_id_super" id="edit_id_super" value="<?php echo $user_data_header->user_id  ? $user_data_header->user_id  : ''; ?>">
                 </div>
                 <div class="d-flex align-items-center justify-content-center mt-4">
                     <a href="javascript:;" class="btn btn-sm btn-secondary me-3" data-bs-dismiss="modal">Cancel</a>
-                    <a href="javascript:;" class="btn btn-sm btn-primary" data-bs-dismiss="modal">Update My Profile</a>
+                    <button type="submit"  class="btn btn-sm btn-primary" id="btnsubmit">Update My Profile</button>
                 </div>
             </div>
+            </form>
         </div>
         <!--end::Modal dialog-->
     </div>
 </div>
 <!--end::Modal - Update My Profile-->
+<script>
+	function Edit_validate() {
+		var err = 0;
+
+
+		var user_name = $('#user_name').val();
+		if (user_name.trim() == '') {
+			// $('#gender_err').html('Please Select a Gender !');
+			if (err == 0) {
+				Swal.fire({
+					title: 'Error !',
+					text: 'Enter Name is Required..!',
+					icon: 'error',
+					confirmButtonText: 'Okay'
+				});
+				err++;
+			}
+		}
+
+		if (err > 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+</script>

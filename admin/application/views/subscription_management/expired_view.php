@@ -32,7 +32,7 @@
         <div class="row mb-2">
             <label class="col-5 fs-6 fw-semibold">Company</label>
             <label class="col-1 fs-6 fw-bold">:</label>
-            <label class="col-6 fs-5 fw-bold"><?php echo $view->company_name; ?></label>
+            <label class="col-6 fs-5 fw-bold"><?php echo $view->user_company; ?></label>
         </div>
         <div class="row mb-2">
             <label class="col-5 fs-6 fw-semibold">Mobile No</label>

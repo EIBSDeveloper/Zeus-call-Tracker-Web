@@ -79,7 +79,7 @@
 											<div class="text-center">
 												<label class="fw-bold fs-5"><?php echo $view->name; ?>  - <?php echo $view->mobile_no; ?></label>
 												<div class="d-block">
-													<label class="badge badge-primary fs-5 fw-bold text-white"><?php echo $view->company_name; ?></label>
+													<label class="badge badge-primary fs-5 fw-bold text-white"><?php echo $view->user_company; ?></label>
 													<label class="badge badge-danger fs-5 fw-bold text-white" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Renewal Days"><?php echo renewal_days_count($view->subscriber_id)?> Days</label>
 												</div>
 											</div>
@@ -123,7 +123,7 @@
 															<div class="row mb-2">
 																<label class="col-5 fs-6 fw-semibold">Company</label>
 																<label class="col-1 fs-6 fw-bold">:</label>
-																<label class="col-6 fs-5 fw-bold"><?php echo $view->company_name; ?></label>
+																<label class="col-6 fs-5 fw-bold"><?php echo $view->user_company; ?></label>
 															</div>
 															<div class="row mb-2">
 																<label class="col-5 fs-6 fw-semibold">Mobile No</label>
@@ -256,7 +256,15 @@
 																				<div class="badge badge-warning text-black fw-semibold fs-7"><?php echo renewal_days_count($sublist->subscriber_id)?> Days</div>
 																			</td>
 																			<td>
-																				<span class="fw-semibold fs-7 badge badge-warning text-black">New Purchased</span>
+																				<?php if($sublist->status == "4") {?>
+																					<div class="badge badge-danger text-white fw-bold fs-7 rounded">Expired</div>
+																				<?php } else if($sublist->status == "3") {?>
+																					<div class="badge badge-danger text-black fw-bold fs-7 rounded" style="background-color: #FF7F00 !important;">Renewal</div>
+																				<?php } else if($sublist->status == "1") {?>
+																					<div class="badge badge-warning text-black fw-bold fs-7 rounded">Callers Added</div>
+																				<?php } else if($sublist->status == "0") {?>
+																					<div class="badge badge-warning text-black fw-bold fs-7 rounded">New Purchased</div>
+																				<?php } ?>
 																			</td>
 																		</tr>
 																	<?php }?>

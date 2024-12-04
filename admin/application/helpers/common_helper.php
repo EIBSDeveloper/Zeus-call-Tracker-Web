@@ -128,7 +128,7 @@ function get_user_details($id)
 {
 	$ci = &get_instance();
 	$ci->load->database();
-	$result = $ci->db->select('*')->from('user')->where('user_id', $id)->get()->row();
+	$result = $ci->db->select('*')->from('user_login_credential')->where('user_login_credential_id', $id)->get()->row();
 	// $result = $ci->db;
 	// save_query_in_log();
 	return $result;
